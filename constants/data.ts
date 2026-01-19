@@ -1,0 +1,46 @@
+import { Activity, Terminal, FileText, Cpu } from "lucide-react";
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  icon: React.ComponentType<{ className?: string }>;
+  colSpan: 1 | 2;
+}
+
+export const projects: Project[] = [
+  {
+    id: "content-monitor",
+    title: "End-to-End Content Monitor",
+    description: "Architected an automated pipeline to track historical changes in external documentation, simulating release validation workflows.",
+    tags: ["Python", "Cron", "Diff Algorithm", "BeautifulSoup"],
+    icon: Activity,
+    colSpan: 1,
+  },
+  {
+    id: "autobass",
+    title: "AutoBASS CLI",
+    description: "Built a robust CLI utility for automated artifact backups with timestamped versioning and error logging.",
+    tags: ["Bash", "Rsync", "Linux"],
+    icon: Terminal,
+    colSpan: 1,
+  },
+  {
+    id: "pymark",
+    title: "PyMark Renderer",
+    description: "Developed a dependency-free Markdown-to-HTML engine with 90%+ test coverage.",
+    tags: ["Python", "TDD", "Pytest"],
+    icon: FileText,
+    colSpan: 1,
+  },
+  {
+    id: "xr-optimization",
+    title: "XR Latency Optimization",
+    description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
+    tags: ["Unity", "Profiling", "visionOS"],
+    icon: Cpu,
+    colSpan: 1,
+  },
+];
+
