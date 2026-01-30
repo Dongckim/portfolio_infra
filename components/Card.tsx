@@ -25,12 +25,12 @@ export default function Card({ id, title, description, tags, icon: Icon, colSpan
           y: -2,
           transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
         }}
-        className={`group relative ${colSpanClass} bg-white rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md`}
+        className={`group relative ${colSpanClass} bg-surface rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md border border-border`}
       >
         <div className="flex flex-col h-full">
           {/* Icon */}
           <div className="mb-4 md:mb-5">
-            <div className="inline-flex p-2.5 bg-gray-100 rounded-lg">
+            <div className="inline-flex p-2.5 bg-muted rounded-lg">
               <Icon className="w-5 h-5 md:w-6 md:h-6 text-textPrimary" />
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function Card({ id, title, description, tags, icon: Icon, colSpan
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs font-medium bg-gray-100 text-textSecondary rounded-md"
+                className="px-3 py-1 text-xs font-medium bg-muted text-textSecondary rounded-md"
               >
                 {tag}
               </span>

@@ -5,13 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { projectDetails } from "@/data/projects";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [prevHoveredItem, setPrevHoveredItem] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,8 +125,8 @@ export default function Navbar() {
       {
         title: "Appearance",
         items: [
-          { label: "Light Mode", href: "#", action: () => setIsDark(false) },
-          { label: "Dark Mode", href: "#", action: () => setIsDark(true) },
+          { label: "Light Mode", href: "#", action: () => theme !== "light" && toggleTheme() },
+          { label: "Dark Mode", href: "#", action: () => theme !== "dark" && toggleTheme() },
         ],
       },
     ],
@@ -149,7 +151,7 @@ export default function Navbar() {
       }}
     >
       <nav
-        className="transition-all duration-300 bg-white/95 backdrop-blur-xl"
+        className="transition-all duration-300 bg-glass backdrop-blur-xl border-b border-glassBorder"
         onMouseEnter={() => {
           // Keep dropdown open when mouse enters nav area
           if (hoveredItem) {
@@ -206,8 +208,9 @@ export default function Navbar() {
                 }}
               >
                 <button
-                  className="text-textPrimary font-normal relative block py-1.5"
-                  aria-label="Theme"
+                  onClick={toggleTheme}
+                  className="text-textPrimary font-normal relative block py-1.5 hover:opacity-80 transition-opacity"
+                  aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
                 >
                   {isDark ? (
                     <Sun className="w-[18px] h-[18px]" />
@@ -277,7 +280,7 @@ export default function Navbar() {
                 ease: [0.16, 1, 0.3, 1]
               }
             }}
-            className="fixed top-12 md:top-14 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl"
+            className="fixed top-12 md:top-14 left-0 right-0 z-40 bg-glass backdrop-blur-xl border-b border-glassBorder"
             onMouseEnter={() => {
               // Keep dropdown open when mouse enters dropdown
               if (hoveredItem) {
@@ -362,7 +365,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white/95 backdrop-blur-xl overflow-hidden fixed top-12 md:top-14 left-0 right-0 z-40 border-t border-border/30"
+            className="md:hidden bg-glass backdrop-blur-xl overflow-hidden fixed top-12 md:top-14 left-0 right-0 z-40 border-t border-glassBorder"
           >
             <div className="px-4 py-4 space-y-4">
               {menuItems.map((item) => (

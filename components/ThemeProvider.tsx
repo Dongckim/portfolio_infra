@@ -22,7 +22,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setTheme(savedTheme);
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
-      document.documentElement.setAttribute("data-theme", "light");
+      const docTheme = document.documentElement.getAttribute("data-theme") as Theme | null;
+      if (docTheme === "dark" || docTheme === "light") {
+        setTheme(docTheme);
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
     }
   }, []);
 

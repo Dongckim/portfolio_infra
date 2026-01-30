@@ -6,17 +6,19 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: ["selector", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
-        background: "#F5F5F7",
-        surface: "#FFFFFF",
-        border: "rgba(0, 0, 0, 0.1)",
-        textPrimary: "#1D1D1F",
-        textSecondary: "#6E6E73",
-        accent: "#0071E3",
-        glass: "rgba(255, 255, 255, 0.7)",
-        glassBorder: "rgba(255, 255, 255, 0.18)",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        border: "var(--border)",
+        textPrimary: "var(--text-primary)",
+        textSecondary: "var(--text-secondary)",
+        accent: "var(--accent)",
+        glass: "var(--glass)",
+        glassBorder: "var(--glass-border)",
+        muted: "var(--muted)",
       },
       backdropBlur: {
         xs: '2px',

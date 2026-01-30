@@ -45,20 +45,20 @@ export default function ProjectCardCarousel() {
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 whileHover={{ y: -2 }}
-                className="relative flex flex-col h-full min-h-[280px] bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80 transition-all duration-300 hover:shadow-md"
+                className="relative flex flex-col h-full min-h-[280px] bg-surface rounded-2xl p-6 shadow-sm border border-border transition-all duration-300 hover:shadow-md"
               >
                 {/* Icon */}
                 <div className="mb-4">
-                  <div className="inline-flex p-2.5 bg-gray-100 rounded-xl">
-                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#1D1D1F]" />
+                  <div className="inline-flex p-2.5 bg-muted rounded-xl">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-textPrimary" />
                   </div>
                 </div>
                 {/* Title */}
-                <h3 className="text-lg sm:text-xl font-bold text-[#1D1D1F] mb-2 tracking-tight leading-tight line-clamp-2">
+                <h3 className="text-lg sm:text-xl font-bold text-textPrimary mb-2 tracking-tight leading-tight line-clamp-2">
                   {project.title}
                 </h3>
                 {/* Description */}
-                <p className="text-sm text-[#6E6E73] leading-relaxed flex-1 line-clamp-3 mb-6">
+                <p className="text-sm text-textSecondary leading-relaxed flex-1 line-clamp-3 mb-6">
                   {project.description}
                 </p>
                 {/* Bottom: tags + action button */}
@@ -67,7 +67,7 @@ export default function ProjectCardCarousel() {
                     {project.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 text-xs font-medium text-[#6E6E73] bg-gray-100 rounded-md truncate max-w-[100px]"
+                        className="px-2 py-0.5 text-xs font-medium text-textSecondary bg-muted rounded-md truncate max-w-[100px]"
                       >
                         {tag}
                       </span>
@@ -75,7 +75,7 @@ export default function ProjectCardCarousel() {
                   </div>
                   {/* + button (Apple-style) */}
                   <span
-                    className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#1D1D1F] text-white transition-transform group-hover:scale-105"
+                    className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-textPrimary text-surface transition-transform group-hover:scale-105"
                     aria-hidden
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +97,7 @@ export default function ProjectCardCarousel() {
               type="button"
               onClick={() => scrollProjects("left")}
               aria-label="Previous projects"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#1D1D1F] shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0071E3] focus:ring-offset-2"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-textPrimary shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -107,7 +107,7 @@ export default function ProjectCardCarousel() {
               type="button"
               onClick={() => scrollProjects("right")}
               aria-label="Next projects"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-[#1D1D1F] shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0071E3] focus:ring-offset-2"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-textPrimary shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
