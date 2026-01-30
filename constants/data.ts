@@ -1,4 +1,4 @@
-import { Activity, Terminal, FileText, Cpu } from "lucide-react";
+import { Activity, Terminal, FileText, Cpu, Shield } from "lucide-react";
 
 export interface Project {
   id: string;
@@ -16,7 +16,7 @@ export const projects: Project[] = [
     description: "Architected an automated pipeline to track historical changes in external documentation, simulating release validation workflows.",
     tags: ["Python", "Cron", "Diff Algorithm", "BeautifulSoup"],
     icon: Activity,
-    colSpan: 1,
+    colSpan: 2,
   },
   {
     id: "autobass",
@@ -40,6 +40,14 @@ export const projects: Project[] = [
     description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
     tags: ["Unity", "Profiling", "visionOS"],
     icon: Cpu,
+    colSpan: 1,
+  },
+  {
+    id: "securesbu",
+    title: "SecureSBU: Your AI Security Partner",
+    description: "Empowering Healthcare Security Through AI and Real-Time Policy Intelligence. SecureSBU bridges the gap between complex HIPAA regulations and real-world staff workflows by delivering instant, accurate, and actionable policy guidance.",
+    tags: ["React", "TypeScript", "NeuralSeek", "Teams API"],
+    icon: Shield,
     colSpan: 1,
   },
 ];

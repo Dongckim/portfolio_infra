@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import BentoGrid from "@/components/BentoGrid";
+import ProjectCardCarousel from "@/components/ProjectCardCarousel";
 import { highlights, highlightImages } from "@/constants/data";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -291,9 +291,10 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Projects Section */}
-      <section id="projects">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-0">
+      {/* Projects Section - Apple-style: light gray header + white card strip */}
+      <section id="projects" className="bg-[#F5F5F7]">
+        {/* Header area: light gray background */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-16 pb-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -302,6 +303,7 @@ export default function Home() {
               delay: 1.2,
               ease: [0.22, 1, 0.36, 1]
             }}
+            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -311,15 +313,24 @@ export default function Home() {
                 delay: 1.2,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className="text-4xl md:text-6xl font-bold text-textPrimary tracking-tight mb-0"
+              className="text-4xl md:text-6xl font-bold text-textPrimary tracking-tight"
             >
               Projects.
             </motion.h2>
+            <motion.a
+              href="#projects"
+              className="text-base font-medium text-accent hover:underline shrink-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4 }}
+            >
+              View all
+            </motion.a>
           </motion.div>
         </div>
 
-        {/* YouTube Section - 프로젝트 섹션 안에, 화면 전체 너비로 나타남 */}
-        <div className="w-full my-6 md:my-8 mb-4 md:mb-6">
+        {/* YouTube Section - MIT Reality Hack 2026 (프로젝트 섹션 안, 전체 너비) */}
+        <div className="w-full mt-8 sm:mt-10 md:mt-8">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -342,8 +353,8 @@ export default function Home() {
               {/* Gradient Overlay for text readability - 하단에만 */}
               <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none z-5" />
               
-              {/* Content Overlay - 비디오 하단에 배치 */}
-              <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 md:pb-12">
+              {/* Content Overlay - 비디오 하단에 배치 (모바일: 세로 배치+버튼 오른쪽, md+: PC처럼 한 줄) */}
+              <div className="absolute bottom-0 left-0 right-0 z-20 pb-6 sm:pb-8 md:pb-12">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -353,19 +364,19 @@ export default function Home() {
                       delay: 1.1,
                       ease: [0.22, 1, 0.36, 1]
                     }}
-                    className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8"
+                    className="flex flex-col md:flex-row items-stretch md:items-end justify-between gap-4 md:gap-8"
                   >
                     {/* Left Side - Description */}
-                    <div className="flex-1">
-                      <p className="text-2xl md:text-3xl lg:text-4xl text-white font-bold leading-tight mb-3 tracking-tight">
-                        Empowering Healthcare Security Through AI and Real-Time Policy Intelligence
+                    <div className="flex-1 min-w-0">
+                      <p className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-white font-bold leading-snug sm:leading-tight mb-2 md:mb-3 tracking-tight">
+                        MIT Reality Hack 2026 — Grand Prize (Gold Award) & Meta Track Winner
                       </p>
-                      <p className="text-base md:text-lg text-white/80 leading-relaxed">
-                        SecureSBU bridges the gap between complex HIPAA regulations and real-world staff workflows by delivering instant, accurate, and actionable policy guidance.
+                      <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
+                        World&apos;s premier XR + AI hackathon. Building immersive experiences that push the boundaries of spatial computing and real-time multi-device synchronization.
                       </p>
                     </div>
                     
-                    {/* Right Side - Learn More Button */}
+                    {/* Right Side - Learn More (모바일: 오른쪽 정렬, md+: 같은 줄) */}
                     <motion.div
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -374,17 +385,17 @@ export default function Home() {
                         delay: 1.2,
                         ease: [0.22, 1, 0.36, 1]
                       }}
-                      className="flex-shrink-0"
+                      className="flex flex-shrink-0 justify-end md:justify-start"
                     >
                       <motion.a
-                        href="/projects/securesbu"
+                        href="/projects/xr-optimization"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 bg-white text-textPrimary rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:bg-white/90 shadow-lg"
+                        className="inline-flex items-center justify-center px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-white text-textPrimary rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:bg-white/90 shadow-lg whitespace-nowrap"
                       >
                         Learn more
                         <svg 
-                          className="w-4 h-4 md:w-5 md:h-5 ml-2" 
+                          className="w-4 h-4 md:w-5 md:h-5 ml-1.5 sm:ml-2" 
                           fill="none" 
                           stroke="currentColor" 
                           viewBox="0 0 24 24"
@@ -405,19 +416,9 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Bento Grid - 프로젝트 카드들 */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12 md:pb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 1.4,
-              ease: [0.22, 1, 0.36, 1]
-            }}
-          >
-            <BentoGrid />
-          </motion.div>
+        {/* Card strip: white starts exactly where YouTube ends */}
+        <div className="bg-white rounded-t-3xl">
+          <ProjectCardCarousel />
         </div>
       </section>
 
