@@ -43,7 +43,7 @@ export const projectDetails: ProjectDetail[] = [
     techStack: ['Node.js', 'Express', 'AWS S3', 'Prisma', 'OpenAI API', 'WebSocket', 'SQLite'],
     links: {
       repo: 'https://github.com/your-org/Reality_Hack',
-      demo: 'https://devpost.com/software/smartsight-8094kg#updates',
+      demo: 'https://devpost.com/software/smartsight-8094kg',
     },
     challenge: 'Upload-and-analyze latency was ~13s (presigned URL → client upload → analyze → DB save), hurting mobile UX. The challenge was to cut end-to-end latency to ~5s without changing AI behavior: reduce network round-trips, avoid blocking on DB writes, and keep image data off the server when calling OpenAI.',
     architecture: {
