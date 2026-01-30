@@ -319,7 +319,7 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* YouTube Section - MIT Reality Hack 2026 (프로젝트 섹션 안, 전체 너비) */}
+        {/* YouTube Section - 모바일: 제목·설명 비디오 위 / PC: 비디오 안 하단 오버레이 */}
         <div className="w-full mt-8 sm:mt-10 md:mt-8">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -331,74 +331,75 @@ export default function Home() {
             }}
             className="relative w-full"
           >
+            {/* 모바일 전용: 대제목 + 섹션 설명 (비디오 위) */}
+            <div className="md:hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 1.1,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                className="flex flex-col gap-4"
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl sm:text-2xl font-bold text-textPrimary tracking-tight leading-tight mb-2">
+                    MIT Reality Hack 2026 — Grand Gold Award & Meta Track Winner
+                  </h3>
+                  <p className="text-sm sm:text-base text-textSecondary leading-relaxed">
+                    World&apos;s premier XR + AI hackathon. Building immersive experiences that push the boundaries of spatial computing and real-time multi-device synchronization.
+                  </p>
+                </div>
+                <motion.a
+                  href="/projects/reality-hack"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center justify-center self-start px-4 sm:px-6 py-2.5 sm:py-3 bg-surface text-textPrimary rounded-full text-sm font-medium transition-all duration-200 hover:opacity-90 shadow-sm border border-border"
+                >
+                  Learn more
+                  <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </motion.a>
+              </motion.div>
+            </div>
+
+            {/* YouTube 비디오: PC에서는 하단에 오버레이(대제목+설명+Learn more) */}
             <div className="relative w-full aspect-video overflow-hidden">
-              <div
-                ref={playerRef}
-                className="absolute inset-0 w-full h-full z-0"
-              />
-              
-              {/* 투명 오버레이 - YouTube 플레이어의 인터랙션 차단 (하단 텍스트/버튼 영역 제외) */}
-              <div className="absolute inset-0 z-10 pointer-events-auto" style={{ clipPath: 'inset(0 0 30% 0)' }} />
-              
-              {/* Gradient Overlay for text readability - 하단에만 */}
-              <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none z-5" />
-              
-              {/* Content Overlay - 비디오 하단에 배치 (모바일: 세로 배치+버튼 오른쪽, md+: PC처럼 한 줄) */}
-              <div className="absolute bottom-0 left-0 right-0 z-20 pb-6 sm:pb-8 md:pb-12">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div ref={playerRef} className="absolute inset-0 w-full h-full z-0" />
+
+              {/* PC 전용: 비디오 하단 그라데이션 + 텍스트 오버레이 */}
+              <div className="hidden md:block absolute inset-0 pointer-events-none z-5">
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+              </div>
+              <div className="hidden md:flex absolute bottom-0 left-0 right-0 z-10 pointer-events-none pb-8 md:pb-10 lg:pb-12">
+                <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.8,
-                      delay: 1.1,
-                      ease: [0.22, 1, 0.36, 1]
-                    }}
-                    className="flex flex-col md:flex-row items-stretch md:items-end justify-between gap-4 md:gap-8"
+                    transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex flex-row items-end justify-between gap-8"
                   >
-                    {/* Left Side - Description */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-white font-bold leading-snug sm:leading-tight mb-2 md:mb-3 tracking-tight">
+                      <p className="text-2xl md:text-3xl lg:text-4xl text-white font-bold leading-tight mb-2 md:mb-3 tracking-tight">
                         MIT Reality Hack 2026 — Grand Gold Award & Meta Track Winner
                       </p>
-                      <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
+                      <p className="text-base md:text-lg text-white/80 leading-relaxed">
                         World&apos;s premier XR + AI hackathon. Building immersive experiences that push the boundaries of spatial computing and real-time multi-device synchronization.
                       </p>
                     </div>
-                    
-                    {/* Right Side - Learn More (모바일: 오른쪽 정렬, md+: 같은 줄) */}
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        duration: 0.8,
-                        delay: 1.2,
-                        ease: [0.22, 1, 0.36, 1]
-                      }}
-                      className="flex flex-shrink-0 justify-end md:justify-start"
+                    <motion.a
+                      href="/projects/reality-hack"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-shrink-0 pointer-events-auto inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 bg-white text-textPrimary rounded-full text-base font-medium transition-all duration-200 hover:bg-white/90 shadow-lg"
                     >
-                      <motion.a
-                        href="/projects/reality-hack"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center justify-center px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-surface text-textPrimary rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:opacity-90 shadow-lg whitespace-nowrap border border-border"
-                      >
-                        Learn more
-                        <svg 
-                          className="w-4 h-4 md:w-5 md:h-5 ml-1.5 sm:ml-2" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M9 5l7 7-7 7" 
-                          />
-                        </svg>
-                      </motion.a>
-                    </motion.div>
+                      Learn more
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.a>
                   </motion.div>
                 </div>
               </div>
