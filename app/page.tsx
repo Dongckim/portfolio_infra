@@ -303,7 +303,6 @@ export default function Home() {
               delay: 1.2,
               ease: [0.22, 1, 0.36, 1]
             }}
-            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
           >
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -317,15 +316,6 @@ export default function Home() {
             >
               Projects.
             </motion.h2>
-            <motion.a
-              href="#projects"
-              className="text-base font-medium text-accent hover:underline shrink-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.4 }}
-            >
-              View all
-            </motion.a>
           </motion.div>
         </div>
 

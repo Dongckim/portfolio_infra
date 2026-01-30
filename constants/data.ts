@@ -1,4 +1,4 @@
-import { Activity, Terminal, FileText, Cpu, Shield } from "lucide-react";
+import { Activity, Terminal, FileText, Cpu, Shield, Sparkles } from "lucide-react";
 
 export interface Project {
   id: string;
@@ -10,6 +10,14 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    id: "reality-hack",
+    title: "SmartSight: You Learn. We see. We remember.",
+    description: "Backend for first-person study images from Ray-Ban Meta glasses: upload, AI analysis (GPT-4 Vision), session/topic tracking, and realtime voice (OpenAI Realtime API).",
+    tags: ["Node.js", "OpenAI", "AWS S3", "Prisma"],
+    icon: Sparkles,
+    colSpan: 1,
+  },
   {
     id: "content-monitor",
     title: "Web Content Integrity Monitor",
