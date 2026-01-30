@@ -44,3 +44,20 @@ export const projects: Project[] = [
   },
 ];
 
+export interface Highlight {
+  title: string;
+}
+
+export const highlights: Highlight[] = [
+  { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
+  { title: "MIT Reality Hack 2026 - Meta Track Winner" },
+  { title: "Scheduled to attend AWE USA 2026 (World's #1 XR + AI Event)" },
+];
+
+export const highlightImages: string[] = [
+  "/mit-reality-hack-2026-1.jpg",
+  "/mit-reality-hack-2026-2.jpg",
+  "/mit-reality-hack-2026-3.jpg",
+  "/mit-reality-hack-2026-4.jpg",
+];
+
