@@ -23,6 +23,8 @@ export interface ProjectDetail {
   };
   reliability: {
     coverage?: string;
+    validation?: string;
+    validationEdgeCases?: string[];
     errorHandling: string;
   };
   impact: string;
@@ -346,6 +348,89 @@ async function handleUserQuery(query: string, userId: string) {
       errorHandling: 'Implemented **Graceful Degradation** for policy queries. When NeuralSeek cannot find a relevant answer, the system returns "I couldn\'t find a specific policy for this. Please consult with the security team directly" rather than fabricating information. Incident reports include automatic retry logic with exponential backoff to handle temporary Discord API outages.',
     },
     impact: 'Transformed security compliance from static documentation to dynamic, intelligent infrastructure. The chatbot reduced response time for policy questions from hours (manual lookup) to seconds, while the risk-aware incident reporting workflow closed the loop from user detection → team response within seconds. By combining AI precision with human oversight, every hospital staff member became part of the security defense system—effortlessly.',
+  },
+  {
+    slug: 'reality-hack',
+    title: 'SmartSight: You Learn. We see. We remember.',
+    pitch: 'Backend for first-person study images from Ray-Ban Meta glasses: upload, AI analysis (GPT-4 Vision), session/topic tracking, and realtime voice (OpenAI Realtime API).',
+    role: 'Backend / API Engineer',
+    techStack: ['Node.js', 'Express', 'AWS S3', 'Prisma', 'OpenAI API', 'WebSocket', 'SQLite'],
+    links: {
+      repo: 'https://github.com/your-org/Reality_Hack',
+    },
+    challenge: 'Upload-and-analyze latency was ~13s (presigned URL → client upload → analyze → DB save), hurting mobile UX. The challenge was to cut end-to-end latency to ~5s without changing AI behavior: reduce network round-trips, avoid blocking on DB writes, and keep image data off the server when calling OpenAI.',
+    architecture: {
+      diagram: {
+        description: '13s → 5s Latency-Optimized Pipeline',
+        components: [
+          { label: 'Client (Mobile)', position: { x: 10, y: 50 } },
+          { label: 'One-Step Upload & Analyze', position: { x: 30, y: 50 } },
+          { label: 'S3 Upload', position: { x: 50, y: 30 } },
+          { label: 'Presigned Read URL', position: { x: 50, y: 70 } },
+          { label: 'OpenAI Vision (direct URL)', position: { x: 70, y: 50 } },
+          { label: 'Fire-and-Forget DB Save', position: { x: 90, y: 50 } },
+        ],
+        connections: [
+          { from: 0, to: 1 },
+          { from: 1, to: 2 },
+          { from: 1, to: 3 },
+          { from: 3, to: 4 },
+          { from: 4, to: 5 },
+        ],
+      },
+      code: {
+        language: 'javascript',
+        snippet: `// Fire-and-Forget DB Save (analyzeController.js L155–198)
+// Save analysis to database (async - don't block response)
+// Only save if isStudying is true
+const saveToDatabase = async () => {
+  if (!isStudying) return null;
+  try {
+    const savedAnalysis = await prismaService.createImageAnalysis(sessionId, { ... });
+    return savedAnalysis.id;
+  } catch (dbError) {
+    return null;
+  }
+};
+const savePromise = isStudying ? saveToDatabase() : Promise.resolve(null);
+let analysisId = null;
+if (isStudying) {
+  try {
+    analysisId = await Promise.race([
+      savePromise,
+      new Promise(resolve => setTimeout(() => resolve(null), 500))
+    ]);
+  } catch (error) { /* save continues in background */ }
+}
+res.status(200).json({ success: true, data: { ...responseData, analysisId } });
+if (isStudying) savePromise.catch(() => {});
+
+// Presigned URL for OpenAI (analyzeController.js L85–89)
+// Generate presigned read URL for the image (valid for 1 hour)
+const imageUrl = await s3Service.generatePresignedReadUrl(s3Key, 3600);
+const analysisResult = await openaiService.analyzeStudentPOV(imageUrl, { sessionId });
+
+// One-Step Upload & Analyze (uploadController.js)
+// POST /api/upload-and-analyze
+const { s3Key, s3Url } = await s3Service.uploadFile(fileBuffer, null, contentType);
+const imageUrl = await s3Service.generatePresignedReadUrl(s3Key, 3600);
+const analysisResult = await openaiService.analyzeStudentPOV(imageUrl);`,
+      },
+      tradeoffs: '**Fire-and-Forget DB**: We don\'t await DB save; we use `Promise.race` with a 500ms cap so the response can include `analysisId` when the save finishes quickly, otherwise we return `analysisId: null` and the client can poll or ignore. This keeps latency independent of DB speed. \n **One-Step Endpoint**: `POST /api/upload-and-analyze` combines upload + analyze in one request so the client does one round-trip instead of presigned URL → upload → analyze (three steps).',
+    },
+    reliability: {
+      validation: '**Jest unit tests** cover controllers, services, and middleware with **mocked** S3, OpenAI, and Prisma (no live API calls).',
+      validationEdgeCases: [
+        '**session** — missing sessionId (auto-create), inactive session (400), session not found (404)',
+        '**upload/analyze** — missing s3Key and file (400), no file in upload-and-analyze (400)',
+        '**fire-and-forget** — `createImageAnalysis` rejected (test asserts 200 and response still returned; DB failure does not break the request)',
+        '**presigned URL** — `generatePresignedReadUrl(s3Key, 3600)` and `analyzeStudentPOV(presignedUrl)` invocation verified in controller tests',
+        '**services** — presigned URL generation with missing S3_BUCKET, upload failure, OpenAI parse/API errors',
+        '**Middleware tests** — sessionId from header vs body (prefer header), 400 when not active, 404 when not found',
+      ],
+      errorHandling: 'DB save runs in the background; failures are caught inside `saveToDatabase()` and return null, and we attach a no-op `.catch()` so unhandled rejections don\'t crash the process. Session validation (active/not found) returns 4xx before starting analysis. S3/OpenAI errors propagate to the global error middleware and return structured JSON.',
+    },
+    impact: 'End-to-end latency for upload-and-analyze dropped from ~13s to ~5s. Fire-and-forget DB save removes DB time from the critical path; presigned URL keeps image data off the server and lets OpenAI read directly from S3; one-step endpoint removes two client round-trips. Mobile UX improved with faster feedback; analysis results are still persisted when `isStudying` is true, with optional 500ms wait for `analysisId` in the response.',
   },
 ];
 

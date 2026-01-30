@@ -211,23 +211,38 @@ export function Section({ title, children }: SectionProps) {
   );
 }
 
-// Utility function to convert markdown bold (**text**) to HTML bold
+// Inline code styling (matches code-block theme)
+const inlineCodeClass =
+  "font-mono text-sm text-gray-300 bg-[#1E1E1E] border border-[#2D2D30] rounded px-1.5 py-0.5";
+
+// Utility function to convert markdown bold (**text**) and inline code (`text`) to styled HTML
 export function renderMarkdownBold(text: string): React.ReactNode {
-  // Split by lines to preserve line breaks
-  const lines = text.split('\n');
-  
+  const lines = text.split("\n");
+
   return (
     <>
       {lines.map((line, lineIndex) => {
-        // Split each line by bold markers
-        const parts = line.split(/(\*\*[^*]+\*\*)/g);
-        
+        // Split by bold (**...**) or inline code (`...`), keep delimiters
+        const parts = line.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+
         return (
           <React.Fragment key={lineIndex}>
             {parts.map((part, partIndex) => {
-              if (part.startsWith('**') && part.endsWith('**')) {
+              if (part.startsWith("**") && part.endsWith("**")) {
                 const boldText = part.slice(2, -2);
-                return <strong key={partIndex} className="font-semibold text-white">{boldText}</strong>;
+                return (
+                  <strong key={partIndex} className="font-semibold text-white">
+                    {boldText}
+                  </strong>
+                );
+              }
+              if (part.startsWith("`") && part.endsWith("`")) {
+                const codeText = part.slice(1, -1);
+                return (
+                  <code key={partIndex} className={inlineCodeClass}>
+                    {codeText}
+                  </code>
+                );
               }
               return <span key={partIndex}>{part}</span>;
             })}

@@ -149,7 +149,33 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 <p className="text-gray-300">{project.reliability.coverage}</p>
               </div>
             )}
-            
+            {project.reliability.validation && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Validation</h3>
+                <p className="text-lg text-gray-300 leading-relaxed mb-4">
+                  {renderMarkdownBold(project.reliability.validation)}
+                </p>
+                {project.reliability.validationEdgeCases && project.reliability.validationEdgeCases.length > 0 && (
+                  <div className="rounded-lg overflow-hidden border border-[#2D2D30] bg-[#1E1E1E] shadow-2xl mt-4">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#252526] border-b border-[#2D2D30]">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                        <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                        <div className="w-3 h-3 rounded-full bg-[#28CA42]" />
+                      </div>
+                      <span className="ml-2 text-xs text-gray-400 font-medium">Edge cases validated</span>
+                    </div>
+                    <div className="p-4">
+                      <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-300 leading-relaxed">
+                        {project.reliability.validationEdgeCases.map((item, i) => (
+                          <li key={i}>{renderMarkdownBold(item)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <div>
               <h3 className="text-lg font-semibold text-white mb-3">Error Handling Strategy</h3>
               <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">

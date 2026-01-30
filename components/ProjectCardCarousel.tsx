@@ -25,7 +25,7 @@ export default function ProjectCardCarousel() {
         className="w-full overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory"
       >
         <div
-          className="flex gap-5 py-6 sm:py-8 min-w-max pl-4 sm:pl-6 lg:pl-[calc((100vw-min(1024px,100vw))/2+2rem)] pr-4 sm:pr-6 lg:pr-[calc((100vw-min(1024px,100vw))/2+2rem)]"
+          className="flex gap-5 pt-10 sm:pt-12 md:pt-14 pb-6 sm:pb-8 min-w-max pl-4 sm:pl-6 lg:pl-[calc((100vw-min(1024px,100vw))/2+2rem)] pr-4 sm:pr-6 lg:pr-[calc((100vw-min(1024px,100vw))/2+2rem)]"
         >
         {projects.map((project, index) => {
           const Icon = project.icon;

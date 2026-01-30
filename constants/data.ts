@@ -19,11 +19,11 @@ export const projects: Project[] = [
     colSpan: 2,
   },
   {
-    id: "autobass",
-    title: "AutoBASS CLI",
-    description: "Built a robust CLI utility for automated artifact backups with timestamped versioning and error logging.",
-    tags: ["Bash", "Rsync", "Linux"],
-    icon: Terminal,
+    id: "xr-optimization",
+    title: "XR Latency Optimization",
+    description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
+    tags: ["Unity", "Profiling", "Latency-free"],
+    icon: Cpu,
     colSpan: 1,
   },
   {
@@ -35,11 +35,11 @@ export const projects: Project[] = [
     colSpan: 1,
   },
   {
-    id: "xr-optimization",
-    title: "XR Latency Optimization",
-    description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
-    tags: ["Unity", "Profiling", "visionOS"],
-    icon: Cpu,
+    id: "autobass",
+    title: "AutoBASS CLI",
+    description: "Built a robust CLI utility for automated artifact backups with timestamped versioning and error logging.",
+    tags: ["Bash", "Rsync", "Linux"],
+    icon: Terminal,
     colSpan: 1,
   },
   {
