@@ -6,6 +6,10 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 export const metadata: Metadata = {
   title: "Dongchan Kim | Engineering Stability",
   description: "Engineering Stability. Optimizing reliability across physical and spatial computing environments.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
