@@ -11,6 +11,14 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "securesbu",
+    title: "SecureSBU: Your AI Security Partner",
+    description: "Empowering Healthcare Security Through AI and Real-Time Policy Intelligence. SecureSBU bridges the gap between complex HIPAA regulations and real-world staff workflows by delivering instant, accurate, and actionable policy guidance.",
+    tags: ["React", "TypeScript", "NeuralSeek", "Teams API"],
+    icon: Shield,
+    colSpan: 1,
+  },
+  {
     id: "content-monitor",
     title: "Web Content Integrity Monitor",
     description: "Architected an automated pipeline to track historical changes in external documentation, simulating release validation workflows.",
@@ -40,14 +48,6 @@ export const projects: Project[] = [
     description: "Built a robust CLI utility for automated artifact backups with timestamped versioning and error logging.",
     tags: ["Bash", "Rsync", "Linux"],
     icon: Terminal,
-    colSpan: 1,
-  },
-  {
-    id: "securesbu",
-    title: "SecureSBU: Your AI Security Partner",
-    description: "Empowering Healthcare Security Through AI and Real-Time Policy Intelligence. SecureSBU bridges the gap between complex HIPAA regulations and real-world staff workflows by delivering instant, accurate, and actionable policy guidance.",
-    tags: ["React", "TypeScript", "NeuralSeek", "Teams API"],
-    icon: Shield,
     colSpan: 1,
   },
 ];

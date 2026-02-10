@@ -121,21 +121,45 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               />
             </div>
 
-            {/* Code Snippet */}
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Key Implementation</h3>
-              <CodeBlock
-                language={project.architecture.code.language}
-                snippet={project.architecture.code.snippet}
-              />
-            </div>
+            {/* Code Snippet(s) */}
+            {Array.isArray(project.architecture.code) ? (
+              <div className="space-y-6">
+                {project.architecture.code.map((block, i) => (
+                  <div key={i}>
+                    <h3 className="text-xl font-semibold text-white mb-4">
+                      {block.label || 'Key Implementation'}
+                    </h3>
+                    <CodeBlock language={block.language} snippet={block.snippet} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-4">Key Implementation</h3>
+                <CodeBlock
+                  language={project.architecture.code.language}
+                  snippet={project.architecture.code.snippet}
+                />
+              </div>
+            )}
 
             {/* Trade-offs */}
             <div>
               <h3 className="text-xl font-semibold text-white mb-4">Technical Trade-offs</h3>
-              <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
-                {renderMarkdownBold(project.architecture.tradeoffs)}
-              </p>
+              {Array.isArray(project.architecture.tradeoffs) ? (
+                <ul className="space-y-3">
+                  {project.architecture.tradeoffs.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed">
+                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#0A84FF] mt-2.5" aria-hidden />
+                      <span>{renderMarkdownBold(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
+                  {renderMarkdownBold(project.architecture.tradeoffs)}
+                </p>
+              )}
             </div>
           </div>
         </Section>
@@ -178,18 +202,40 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             )}
             <div>
               <h3 className="text-lg font-semibold text-white mb-3">Error Handling Strategy</h3>
-              <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
-                {renderMarkdownBold(project.reliability.errorHandling)}
-              </p>
+              {Array.isArray(project.reliability.errorHandling) ? (
+                <ul className="space-y-3">
+                  {project.reliability.errorHandling.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed">
+                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#FF453A] mt-2.5" aria-hidden />
+                      <span>{renderMarkdownBold(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
+                  {renderMarkdownBold(project.reliability.errorHandling)}
+                </p>
+              )}
             </div>
           </div>
         </Section>
 
         {/* Impact & Collaboration Section */}
         <Section title="Impact & Collaboration">
-          <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
-            {renderMarkdownBold(project.impact)}
-          </p>
+          {Array.isArray(project.impact) ? (
+            <ul className="space-y-3">
+              {project.impact.map((item, i) => (
+                <li key={i} className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed">
+                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#30D158] mt-2.5" aria-hidden />
+                  <span>{renderMarkdownBold(item)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-lg text-gray-300 leading-relaxed whitespace-pre-line">
+              {renderMarkdownBold(project.impact)}
+            </p>
+          )}
         </Section>
 
         {/* Images Section - Frame Index Comparison */}

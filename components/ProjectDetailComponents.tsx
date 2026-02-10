@@ -35,7 +35,7 @@ export function CodeBlock({ language, snippet }: CodeBlockProps) {
 interface DiagramPlaceholderProps {
   description: string;
   components: Array<{ label: string; position: { x: number; y: number } }>;
-  connections: Array<{ from: number; to: number }>;
+  connections: Array<{ from: number; to: number; label?: string }>;
 }
 
 export function DiagramPlaceholder({ description, components, connections }: DiagramPlaceholderProps) {

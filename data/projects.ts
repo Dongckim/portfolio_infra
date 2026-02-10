@@ -17,17 +17,22 @@ export interface ProjectDetail {
     };
     code: {
       language: string;
+      label?: string;
       snippet: string;
-    };
-    tradeoffs: string;
+    } | Array<{
+      language: string;
+      label?: string;
+      snippet: string;
+    }>;
+    tradeoffs: string | string[];
   };
   reliability: {
     coverage?: string;
     validation?: string;
     validationEdgeCases?: string[];
-    errorHandling: string;
+    errorHandling: string | string[];
   };
-  impact: string;
+  impact: string | string[];
   images?: {
     title?: string;
     items: Array<{ src: string; alt: string }>;
@@ -37,25 +42,38 @@ export interface ProjectDetail {
 export const projectDetails: ProjectDetail[] = [
   {
     slug: 'reality-hack',
-    title: 'SmartSight: You Learn. We see. We remember.',
-    pitch: 'Backend for first-person study images from Ray-Ban Meta glasses: upload, AI analysis (GPT-4 Vision), session/topic tracking, and realtime voice (OpenAI Realtime API).',
-    role: 'Backend / API Engineer',
-    techStack: ['Node.js', 'Express', 'AWS S3', 'Prisma', 'OpenAI API', 'WebSocket', 'SQLite'],
+    title: 'SmartSight: You Learn. We See. We Remember.',
+    pitch:
+      'Backend for first-person study images from Ray-Ban Meta glasses: one-step upload + GPT-4.1 Vision analysis, ' +
+      'session/topic tracking with hybrid in-memory + DB analytics, realtime voice tutoring via OpenAI Realtime API, ' +
+      'and Google OAuth with JWT token rotation — all deployed on AWS EC2 + RDS + S3.',
+    role: 'Backend / API Engineer (solo backend, 5-person team)',
+    techStack: [
+      'Node.js', 'Express', 'AWS S3 (SDK v3)', 'Prisma (PostgreSQL / RDS)',
+      'OpenAI Responses API (GPT-4.1 Vision)', 'OpenAI Realtime API (WebSocket)',
+      'Google OAuth + JWT', 'Jest', 'GitHub Actions CI',
+    ],
     links: {
-      repo: 'https://github.com/your-org/Reality_Hack',
-      demo: 'https://devpost.com/software/smartsight-8094kg',
+      repo: 'https://github.com/Dongckim/2026-MIT-RealityHack',
     },
-    challenge: 'Upload-and-analyze latency was ~13s (presigned URL → client upload → analyze → DB save), hurting mobile UX. The challenge was to cut end-to-end latency to ~5s without changing AI behavior: reduce network round-trips, avoid blocking on DB writes, and keep image data off the server when calling OpenAI.',
+  
+    challenge:
+      'Three problems at once: (1) Upload-and-analyze latency was ~13 s over cellular (three round-trips + blocking DB), ' +
+      'hurting mobile UX. (2) The realtime voice tutor needed to stay aware of what the student was currently looking at, ' +
+      'but image analysis and voice ran on separate channels with no shared context. ' +
+      '(3) Auth had to support both iOS native (Google Sign-In) and web, with secure token rotation and immediate revocation.',
+  
     architecture: {
       diagram: {
-        description: '13s → 5s Latency-Optimized Pipeline',
+        description: '13 s → 5 s Latency-Optimized Pipeline + Realtime Context Bridge',
         components: [
-          { label: 'Client (Mobile)', position: { x: 10, y: 50 } },
-          { label: 'One-Step Upload & Analyze', position: { x: 30, y: 50 } },
-          { label: 'S3 Upload', position: { x: 50, y: 30 } },
-          { label: 'Presigned Read URL', position: { x: 50, y: 70 } },
-          { label: 'OpenAI Vision (direct URL)', position: { x: 70, y: 50 } },
-          { label: 'Fire-and-Forget DB Save', position: { x: 90, y: 50 } },
+          { label: 'iOS Client (Ray-Ban Meta)', position: { x: 5, y: 50 } },
+          { label: 'POST /api/upload-and-analyze', position: { x: 25, y: 50 } },
+          { label: 'S3 Upload', position: { x: 45, y: 30 } },
+          { label: 'Presigned Read URL (1 h)', position: { x: 45, y: 70 } },
+          { label: 'GPT-4.1 Vision (direct S3 URL)', position: { x: 65, y: 50 } },
+          { label: 'Fire-and-Forget DB Save', position: { x: 85, y: 30 } },
+          { label: 'WS /ws → OpenAI Realtime (context push)', position: { x: 85, y: 70 } },
         ],
         connections: [
           { from: 0, to: 1 },
@@ -63,61 +81,270 @@ export const projectDetails: ProjectDetail[] = [
           { from: 1, to: 3 },
           { from: 3, to: 4 },
           { from: 4, to: 5 },
+          { from: 4, to: 6 },
         ],
       },
-      code: {
-        language: 'javascript',
-        snippet: `// Fire-and-Forget DB Save (analyzeController.js L155–198)
-// Save analysis to database (async - don't block response)
-// Only save if isStudying is true
-const saveToDatabase = async () => {
-  if (!isStudying) return null;
-  try {
-    const savedAnalysis = await prismaService.createImageAnalysis(sessionId, { ... });
-    return savedAnalysis.id;
-  } catch (dbError) {
-    return null;
-  }
-};
-const savePromise = isStudying ? saveToDatabase() : Promise.resolve(null);
-let analysisId = null;
-if (isStudying) {
-  try {
-    analysisId = await Promise.race([
-      savePromise,
-      new Promise(resolve => setTimeout(() => resolve(null), 500))
-    ]);
-  } catch (error) { /* save continues in background */ }
-}
-res.status(200).json({ success: true, data: { ...responseData, analysisId } });
-if (isStudying) savePromise.catch(() => {});
-
-// Presigned URL for OpenAI (analyzeController.js L85–89)
-// Generate presigned read URL for the image (valid for 1 hour)
-const imageUrl = await s3Service.generatePresignedReadUrl(s3Key, 3600);
-const analysisResult = await openaiService.analyzeStudentPOV(imageUrl, { sessionId });
-
-// One-Step Upload & Analyze (uploadController.js)
-// POST /api/upload-and-analyze
-const { s3Key, s3Url } = await s3Service.uploadFile(fileBuffer, null, contentType);
-const imageUrl = await s3Service.generatePresignedReadUrl(s3Key, 3600);
-const analysisResult = await openaiService.analyzeStudentPOV(imageUrl);`,
-      },
-      tradeoffs: '**Fire-and-Forget DB**: We don\'t await DB save; we use `Promise.race` with a 500ms cap so the response can include `analysisId` when the save finishes quickly, otherwise we return `analysisId: null` and the client can poll or ignore. This keeps latency independent of DB speed. \n **One-Step Endpoint**: `POST /api/upload-and-analyze` combines upload + analyze in one request so the client does one round-trip instead of presigned URL → upload → analyze (three steps).',
+      code: [
+        {
+          language: 'markdown',
+          label: '0. Server Bootstrap — server.js',
+          snippet:
+      `HTTP Request
+        │
+        ├─ CORS (Allow-Origin: *, custom headers)
+        ├─ express.json() + urlencoded + cookieParser
+        ├─ optionalAuth (JWT verify + blacklist check ∥ X-User-Id fallback)
+        │
+        ├─ /api/upload/*          → uploadRoutes
+        ├─ /api/upload-and-analyze → multer → uploadController.uploadAndAnalyze
+        ├─ /api/analyze           → analyzeRoutes
+        ├─ /api/session/*         → sessionRoutes
+        ├─ /api/bookmark          → bookmarkRoutes
+        ├─ /api/topic/*           → topicRoutes
+        ├─ /api/help-count        → helpCountRoutes
+        ├─ /api/admin/*           → adminRoutes
+        ├─ /api/auth/*            → authRoutes
+        ├─ /api-docs              → swagger-ui-express
+        │
+        ├─ Global Error Middleware → { success: false, error: { message } }
+        ├─ 404 Handler
+        │
+        └─ http.createServer(app)
+             └─ realtimeService.setupWebSocket(server) → WS /ws`,
+        },
+        {
+          language: 'markdown',
+          label: '1. Upload & Analyze Pipeline (13 s → 5 s) — the critical path',
+          snippet:
+      `iOS Client (Ray-Ban Meta)
+        │
+        │  POST /api/upload-and-analyze  [multipart image, X-Session-Id?]
+        ▼
+      multer (memory, 10 MB, image-only filter)
+        │
+        ▼
+      optionalAuth → req.user (JWT or X-User-Id)
+        │
+        ▼
+      uploadController.uploadAndAnalyze()
+        │
+        ├─ analysisService.resolveSession(sessionId, userId)
+        │    ├─ no sessionId → prismaService.createSession(userId)
+        │    └─ sessionId    → prismaService.getSession() → assert 'active'
+        │
+        ├─ s3Service.uploadFile(buffer, null, mimetype)
+        │    ├─ saveFileLocally()        ← local backup
+        │    └─ S3 PutObjectCommand      ← cloud upload
+        │
+        ▼
+      analysisService.analyzeAndPersist()
+        │
+        ├─ s3Service.generatePresignedReadUrl(s3Key, 3600)
+        │    └─ GetObjectCommand + getSignedUrl (1 h TTL)
+        │
+        ├─ openaiService.analyzeStudentPOV(presignedUrl)
+        │    ├─ OpenAI Responses API (GPT-4.1 Vision)
+        │    │    └─ JSON Schema: { contentAnalysis: { isStudying, isActive,
+        │    │         isDistracted, topic, subtopic, extractedText } }
+        │    ├─ Parse + validate contentAnalysis
+        │    └─ Context Bridge → realtimeService.updateSessionContext()
+        │         └─ topic/subtopic/text → session.update to Realtime WS
+        │
+        ├─ normalizeContent() → topicEnum, isStudying, isActive, isDistracted
+        │
+        ├─ topicTracker.trackTopic(sessionId, topic)
+        │    └─ in-memory Map + fire-and-forget DB upsert
+        │
+        └─ Fire-and-Forget DB Save
+             ├─ prismaService.createImageAnalysis(sessionId, { ... })
+             ├─ Promise.race([ savePromise, setTimeout(500ms) ])
+             │    └─ returns analysisId if fast, null otherwise
+             └─ savePromise.catch(() => {})  ← prevents unhandled rejection
+        │
+        ▼
+      res.status(200).json({
+        sessionId, s3Key, s3Url, analysis, analysisId, uploadedAt
+      })`,
+        },
+        {
+          language: 'markdown',
+          label: '2. Realtime Voice Pipeline — WS /ws → OpenAI Realtime API',
+          snippet:
+      `iOS Client (Float32, 16 kHz, mono)
+        │
+        │  WS /ws (upgrade)
+        ▼
+      realtimeService.setupWebSocket(server)
+        │
+        ├─ new RealtimeClient({ apiKey, model: 'gpt-realtime', voice: 'marin' })
+        │    └─ WS → wss://api.openai.com/v1/realtime
+        │
+        ├─ JSON: { type: 'start_session', session_id, format: 'f32', ... }
+        │    └─ link sessionId ↔ connectionId, reset resampler + audio buffers
+        │
+        ▼
+      on binary message (audio frame):
+        │
+        ├─ float32ToPcm16LE(frame)              ← Float32 → Int16
+        ├─ accumulator + drainPcm16Chunks()     ← 20 ms chunks
+        ├─ Resampler16kTo24k.process(chunk)     ← linear interp, stateful
+        └─ realtimeClient.sendAudioFrame(pcm24) ← Base64 → input_audio_buffer.append
+             │
+             ▼
+        OpenAI Realtime API
+             │
+             ├─ session.created → _sendSessionUpdate({ voice, VAD, instructions })
+             ├─ session.updated → onReady callback
+             │
+             ├─ input_audio_buffer.speech_started
+             │    └─ 🔇 Barge-in: response.cancel → sendJson({ type: 'barge_in' })
+             │
+             ├─ response.created → isPlayingResponse = true
+             ├─ response.audio.delta → Base64 decode → ws.send(binary to iOS)
+             ├─ response.done → isPlayingResponse = false
+             │
+             └─ Context Bridge (from image analysis pipeline):
+                  └─ updateContext(context)
+                       ├─ deduplicate (skip if same as last)
+                       ├─ 5-item sliding window (contextHistory)
+                       └─ session.update { instructions: base + CURRENT SCENE + history }
+        │
+        ▼
+      on close / error:
+        ├─ savePcmToWav(inputAudioBuffer,  'input',  16 kHz)
+        ├─ savePcmToWav(outputAudioBuffer, 'output', 24 kHz)
+        └─ cleanup: realtimeClient.close(), connections.delete()`,
+        },
+        {
+          language: 'markdown',
+          label: '3. Auth Pipeline — Google OAuth + JWT Rotation + Blacklisting',
+          snippet:
+      `── Login ────────────────────────────────────────────────────────────────
+      POST /api/auth/google { idToken }
+        │
+        ├─ googleClient.verifyIdToken({ idToken, audience })
+        │    └─ payload: { sub, email, name }
+        ├─ prisma.user.upsert({ where: { email }, create/update })
+        ├─ issueTokensForUser(user, sub)
+        │    ├─ jwt.sign({ userId, email, jti }, JWT_SECRET, { expiresIn: '15m' })
+        │    └─ crypto.randomBytes(48) → SHA256 → prisma.refreshToken.create()
+        ├─ setAuthCookie(res, accessToken)   ← HTTP-only, sameSite: lax
+        ├─ setRefreshCookie(res, refreshToken)
+        └─ res.json({ userId, email, token, refreshToken })
+      
+      ── Refresh ──────────────────────────────────────────────────────────────
+      POST /api/auth/refresh (cookie or body)
+        │
+        ├─ hashToken(rawRefreshToken) → findFirst({ tokenHash, !revoked, !expired })
+        ├─ prisma.$transaction:
+        │    ├─ revoke old: refreshToken.update({ revokedAt: now })
+        │    └─ issue new: issueTokensForUser(user, tx)  ← atomic swap
+        └─ new cookies + res.json({ token, refreshToken })
+      
+      ── Logout ───────────────────────────────────────────────────────────────
+      POST /api/auth/logout
+        │
+        ├─ refreshToken → updateMany({ revokedAt: now })
+        ├─ accessToken  → jwt.verify → tokenBlacklist.create({ jti, expiresAt })
+        └─ clearCookie(auth_token, refresh_token)
+      
+      ── Middleware (every request) ────────────────────────────────────────────
+      optionalAuth:
+        ├─ extractToken (Bearer header ∥ auth cookie)
+        ├─ jwt.verify → check tokenBlacklist by jti
+        │    ├─ blacklisted → 401
+        │    └─ valid → req.user = { id, email, name }
+        └─ no token → fallback to X-User-Id header → next()`,
+        },
+        {
+          language: 'markdown',
+          label: '4. Session & Topic Analytics Pipeline',
+          snippet:
+      `── Session Lifecycle ─────────────────────────────────────────────────────
+      POST /api/session/start
+        └─ prismaService.createSession(userId)
+             ├─ getOrCreateDefaultUser() ∥ resolveUser(userId)
+             ├─ sessionDay.upsert({ userId, date: 'YYYY-MM-DD' })
+             └─ subSession.create({ sessionDayId })
+                  └─ → { sessionId, status: 'active', startedAt }
+      
+      POST /api/session/:id/end
+        ├─ topicTracker.finalizeSession(sessionId, endTime)
+        │    ├─ calculate remaining duration for current topic
+        │    ├─ addToDailyStats() → DB upsert (fire-and-forget)
+        │    └─ remove from active Map
+        └─ prismaService.endSession(sessionId)
+             └─ → { sessionId, endedAt, totalAnalyses, topicStats }
+      
+      ── Topic Tracking (hybrid: in-memory + DB) ────────────────────────────────────
+      Every image analysis:
+        analysisService.analyzeAndPersist()
+          └─ topicTracker.trackTopic(sessionId, topic, timestamp, userId)
+               │
+               ├─ First image   → create Map entry { currentTopic, startTime }
+               ├─ Topic change  → accumulate duration, DB upsert, update entry
+               └─ Same topic    → no-op (timer continues)
+      
+      Reads:
+        GET /api/session/:id/topic-stats  → topicTracker.getSessionTopicStats()
+        GET /api/today/topic-stats        → getDailyTopicStatsFromDB() + active sessions
+        GET /api/topic/daily?date=...     → getDailyTopicStatsFromDB(date)
+        GET /api/topic/weekly             → getWeeklyTopicStatsFromDB() → dailyBreakdown
+      
+      ── Data Model (Prisma / PostgreSQL) ───────────────────────────────────────────────────────
+      User
+        └─ SessionDay (userId + date, unique)
+             └─ SubSession (startedAt, endedAt)
+                  └─ LearningEvent (s3Key, analysisResult, topicId, isActive, isDistracted)
+                       └─ Bookmark (note)
+             └─ DailyTopicStats (topicId, durationSec, active, passive, numDistracted)
+      
+      Topic (name, unique) → Subtopic (topicId + name, unique)
+      RefreshToken (userId, tokenHash, expiresAt, revokedAt)
+      TokenBlacklist (jti, expiresAt)`,
+        },
+      ],
+      tradeoffs: [
+        '**Fire-and-Forget DB**: `Promise.race` with 500 ms cap keeps latency independent of DB speed; `analysisId` is returned when fast, `null` otherwise. A trailing `.catch(() => {})` prevents crashes.',
+        '**Presigned Read URL**: Image bytes never transit the Node process — OpenAI reads directly from S3, saving ~2 s.',
+        '**One-Step Endpoint**: Collapses three client round-trips into one, saving ~4 s on cellular.',
+        '**Context Bridge**: Image analysis pushes `session.update` to the Realtime voice session with a 5-entry sliding window; only allowed topics (Bio/Math/English/Chem) trigger updates, filtering noise.',
+        '**Realtime Audio**: Custom `Resampler16kTo24k` (stateful linear interpolation) avoids an ffmpeg dependency; barge-in detection via VAD `speech_started` sends `response.cancel` + client notification.',
+        '**Token Rotation**: Refresh uses `$transaction` to atomically revoke + reissue; logout blacklists access JTI.',
+      ],
     },
+  
     reliability: {
-      validation: '**Jest unit tests** cover controllers, services, and middleware with **mocked** S3, OpenAI, and Prisma (no live API calls).',
+      validation:
+        '**7 Jest test suites (~50 cases)** cover controllers, services, and middleware with fully **mocked** S3, OpenAI, and Prisma. ' +
+        '**GitHub Actions CI** runs `npm test` on every push/PR; merge blocked on failure.',
       validationEdgeCases: [
         '**session** — missing sessionId (auto-create), inactive session (400), session not found (404)',
         '**upload/analyze** — missing s3Key and file (400), no file in upload-and-analyze (400)',
-        '**fire-and-forget** — `createImageAnalysis` rejected (test asserts 200 and response still returned; DB failure does not break the request)',
-        '**presigned URL** — `generatePresignedReadUrl(s3Key, 3600)` and `analyzeStudentPOV(presignedUrl)` invocation verified in controller tests',
-        '**services** — presigned URL generation with missing S3_BUCKET, upload failure, OpenAI parse/API errors',
-        '**Middleware tests** — sessionId from header vs body (prefer header), 400 when not active, 404 when not found',
+        '**fire-and-forget** — `createImageAnalysis` rejected → test asserts 200 with `analysisId: null`; DB failure never breaks the request',
+        '**presigned URL** — `generatePresignedReadUrl(s3Key, 3600)` and `analyzeStudentPOV(presignedUrl)` invocation verified',
+        '**OpenAI** — no output text, invalid JSON, missing contentAnalysis, missing required fields, APIError, nested output extraction',
+        '**S3** — missing S3_BUCKET, upload failure, presigned URL failure, PNG vs JPEG, prefix handling',
+        '**middleware** — sessionId from header vs body (prefer header), 400 when inactive, 404 when not found, DB error passthrough',
+        '**Prisma** — createSession, endSession (P2025 → not found), createImageAnalysis (P2003 → invalid FK), getActiveSession null',
       ],
-      errorHandling: 'DB save runs in the background; failures are caught inside `saveToDatabase()` and return null, and we attach a no-op `.catch()` so unhandled rejections don\'t crash the process. Session validation (active/not found) returns 4xx before starting analysis. S3/OpenAI errors propagate to the global error middleware and return structured JSON.',
+      errorHandling: [
+        'Fire-and-forget DB save catches internally + `.catch(() => {})` prevents unhandled rejections.',
+        'Session validation returns 4xx before any S3/OpenAI call.',
+        'S3/OpenAI errors propagate to global error middleware → structured JSON.',
+        'Auth: missing token → 401, blacklisted JTI → 401, invalid Google token → 401.',
+        'Realtime: `response_cancel_not_active` race condition ignored; context update failure logged but never breaks analysis.',
+        'Multer: file-too-large → 400, non-image → 400.',
+      ],
     },
-    impact: 'End-to-end latency for upload-and-analyze dropped from ~13s to ~5s. Fire-and-forget DB save removes DB time from the critical path; presigned URL keeps image data off the server and lets OpenAI read directly from S3; one-step endpoint removes two client round-trips. Mobile UX improved with faster feedback; analysis results are still persisted when `isStudying` is true, with optional 500ms wait for `analysisId` in the response.',
+  
+    impact: [
+      'End-to-end upload-and-analyze latency dropped from **~13 s to ~5 s**.',
+      'Fire-and-forget DB save removes DB from the critical path; presigned read URL eliminates server-side image transfer; one-step endpoint removes two client round-trips.',
+      'Realtime voice context bridge gives the AI tutor sub-second awareness of the student\'s current material.',
+      'Auth follows OWASP best practices (atomic rotation, JTI blacklisting, HTTP-only cookies).',
+      '7 test suites / ~50 cases, all mocked, CI-gated — zero flaky tests.',
+    ],
   },
   {
     slug: 'content-monitor',
@@ -126,7 +353,7 @@ const analysisResult = await openaiService.analyzeStudentPOV(imageUrl);`,
     role: '-',
     techStack: ['Python', 'BeautifulSoup', 'Cron', 'Diff Algorithms'],
     links: {
-      repo: 'https://github.com/Dongckim/web-monitor',
+      repo: 'https://github.com/Dongckim/Web-Content-Integrity-Monitor',
     },
     challenge: 'Tracking content changes in non-standardized HTML (like Wikipedia) creates a "Signal-to-Noise" problem. Naive diffing triggers false positives due to dynamic elements like ads, navigation bars, or timestamps. The challenge was to architect a pipeline that isolates **semantic content** (cleaning the DOM) and automates the entire lifecycle—from scraping to archival to diff reporting—without human intervention.',
     architecture: {
@@ -185,7 +412,7 @@ const analysisResult = await openaiService.analyzeStudentPOV(imageUrl);`,
     role: '-',
     techStack: ['Bash', 'Linux', 'Regex', 'CI/CD'],
     links: {
-      repo: 'https://github.com/Dongckim/autobass',
+      repo: 'https://github.com/Dongckim/autobass-CLI',
     },
     challenge: 'Standard shell backup scripts (using `cp` or simple `tar`) often suffer from "Silent Failures"—where a script exits successfully even if partial data corruption occurred. The engineering challenge was to design a system that guarantees **data integrity** by strictly validating input states, enforcing atomic operations, and allowing granular control over file exclusions via `.bassignore` without hardcoding paths.',
     architecture: {
