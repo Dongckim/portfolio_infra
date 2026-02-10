@@ -133,7 +133,7 @@ export default function Home() {
                     Dongchan Kim | Tools & Automation Engineer
                   </h2>
                   <p className="text-base md:text-lg text-textSecondary leading-relaxed">
-                    Automation-focused Engineer with extensive experience in scripting (Python/Bash) and core Computer Science algorithms. Skilled in diagnosing critical performance bottlenecks, evidenced by achieving less than 50ms frame variance in multi-device XR environments through custom drift-correction algorithms. Dedicated to enhancing software quality via automated testing frameworks and rigorous debugging methodologies.
+                    Automation-focused Engineer with extensive experience in scripting (Js/Python/Bash) and core Computer Science algorithms. Skilled in diagnosing critical performance bottlenecks, evidenced by achieving less than 50ms frame variance in multi-device XR environments through custom drift-correction algorithms. Dedicated to enhancing software quality via automated testing frameworks and rigorous debugging methodologies.
                   </p>
                   <ul className="mt-5 space-y-2 text-textPrimary font-medium tracking-tight">
                     {highlights.map((item) => (
