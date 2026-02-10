@@ -172,7 +172,9 @@ export default function Navbar() {
                 alt="Home"
                 width={24}
                 height={24}
-                className="w-[18px] h-[18px] object-contain"
+                className={`w-[18px] h-[18px] object-contain transition-all duration-300 ${
+                  isDark ? "" : "invert"
+                }`}
               />
             </Link>
 
