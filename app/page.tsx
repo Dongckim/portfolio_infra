@@ -130,10 +130,10 @@ export default function Home() {
                   className="mb-6"
                 >
                   <h2 className="text-xl md:text-2xl font-medium text-textPrimary mb-4 tracking-tight">
-                    Dongchan Kim | Systems Architect & Fullstack Engineer
+                    Dongchan Kim | Architecture-focused Fullstack Engineer
                   </h2>
                   <p className="text-base md:text-lg text-textSecondary leading-relaxed">
-                    Real-time Systems Engineer with extensive experience in scripting (Js/Python/Bash) and core Computer Science algorithms. Skilled in diagnosing critical performance bottlenecks, evidenced by achieving less than 50ms frame variance in multi-device XR environments through custom drift-correction algorithms. Dedicated to enhancing software quality via automated testing frameworks and rigorous debugging methodologies.
+                    Architecture-focused Fullstack Engineer with extensive experience in scripting (Js/Python/Bash) and core Computer Science algorithms. Skilled in diagnosing critical performance bottlenecks, evidenced by achieving less than 50ms frame variance in multi-device XR environments through custom drift-correction algorithms. Dedicated to enhancing software quality via automated testing frameworks and rigorous debugging methodologies.
                   </p>
                   <ul className="mt-5 space-y-2 text-textPrimary font-medium tracking-tight">
                     {highlights.map((item) => (
