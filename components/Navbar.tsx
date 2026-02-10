@@ -42,16 +42,16 @@ export default function Navbar() {
         {
           title: "Explore",
           items: [
-            { label: "Overview", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
-            { label: "Skills", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
-            { label: "Education", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
+            { label: "Overview", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Skills", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Education", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
           ],
         },
         {
           title: "Background",
           items: [
-            { label: "Experience", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
-            { label: "Achievements", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
+            { label: "Experience", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Achievements", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
           ],
         },
       ],
@@ -82,15 +82,15 @@ export default function Navbar() {
         {
           title: "Professional",
           items: [
-            { label: "Work History", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
-            { label: "Internships", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
+            { label: "Work History", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Internships", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
           ],
         },
         {
           title: "Achievements",
           items: [
-            { label: "Notable Work", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
-            { label: "Contributions", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
+            { label: "Notable Work", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Contributions", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
           ],
         },
       ],
@@ -110,7 +110,7 @@ export default function Navbar() {
         {
           title: "Resources",
           items: [
-            { label: "Resume", href: "https://drive.google.com/file/d/1fi6OvehCSm0O4YLc2xDJhkUlasRXD9YM/view?usp=sharing" },
+            { label: "Resume", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
             { label: "XR Portfolio", href: "https://dongchan.xyz" },
           ],
         },
