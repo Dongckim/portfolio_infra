@@ -54,12 +54,15 @@ export const projects: Project[] = [
 
 export interface Highlight {
   title: string;
+  href?: string;
+  linkText?: string;
 }
 
 export const highlights: Highlight[] = [
   { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
   { title: "MIT Reality Hack 2026 - Meta Track Winner" },
-  { title: "Scheduled to attend AWE USA 2026 (World's #1 XR + AI Event)" },
+  { title: "Scheduled to attend HarvardXR 2026 Conference", href: "https://harvardxr.com/2026/program-2026", linkText: "HarvardXR 2026 Conference" },
+  { title: "Scheduled to attend AWE USA 2026 Conference (World's #1 XR + AI Event)", href: "https://www.awexr.com/blog/1288-road-to-awe-2026-i-spatial", linkText: "AWE USA 2026 Conference" },
 ];
 
 export const highlightImages: string[] = [

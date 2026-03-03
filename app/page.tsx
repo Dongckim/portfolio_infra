@@ -139,7 +139,29 @@ export default function Home() {
                     {highlights.map((item) => (
                       <li key={item.title} className="text-base md:text-lg leading-snug flex items-baseline gap-2">
                         <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent mt-1.5" aria-hidden />
-                        <span>{item.title}</span>
+                        {item.href && item.linkText ? (
+                          <span>
+                            {item.title.split(item.linkText).map((part, i, arr) => (
+                              i < arr.length - 1 ? (
+                                <span key={i}>
+                                  {part}
+                                  <a
+                                    href={item.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline decoration-accent/40 underline-offset-2 hover:decoration-accent transition-colors"
+                                  >
+                                    {item.linkText}
+                                  </a>
+                                </span>
+                              ) : (
+                                <span key={i}>{part}</span>
+                              )
+                            ))}
+                          </span>
+                        ) : (
+                          <span>{item.title}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
