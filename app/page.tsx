@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import ProjectCardCarousel from "@/components/ProjectCardCarousel";
+import BentoGrid from "@/components/BentoGrid";
 import { highlights, highlightImages } from "@/constants/data";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -429,9 +429,11 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Card strip: surface starts exactly where YouTube ends */}
+        {/* Project grid */}
         <div className="bg-surface rounded-t-3xl">
-          <ProjectCardCarousel />
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+            <BentoGrid />
+          </div>
         </div>
       </section>
 

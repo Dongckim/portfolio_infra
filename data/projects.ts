@@ -721,6 +721,440 @@ async function handleUserQuery(query: string, userId: string) {
     },
     impact: 'Transformed security compliance from static documentation to dynamic, intelligent infrastructure. The chatbot reduced response time for policy questions from hours (manual lookup) to seconds, while the risk-aware incident reporting workflow closed the loop from user detection → team response within seconds. By combining AI precision with human oversight, every hospital staff member became part of the security defense system—effortlessly.',
   },
+  {
+    slug: 'ape',
+    title: 'A.P.E: AWS Platform Explorer',
+    pitch:
+      'A single 16MB Go binary that serves a Finder-style browser UI for EC2 file management and S3 browsing. ' +
+      'Connect via SSH, drag-and-drop upload files, edit with Monaco, and browse S3 buckets — no SCP commands, no tab-switching.',
+    role: 'Solo Engineer (full stack)',
+    techStack: [
+      'Go 1.26', 'React 18', 'TypeScript', 'Tailwind CSS', 'Vite',
+      'golang.org/x/crypto/ssh', 'github.com/pkg/sftp', 'aws-sdk-go-v2', 'Monaco Editor',
+    ],
+    links: {
+      repo: 'https://github.com/Dongckim/A.P.E',
+    },
+
+    challenge:
+      'Managing EC2 files traditionally means juggling `scp`, `ssh`, and `vim` across terminal tabs. ' +
+      'Existing GUI tools (Cyberduck, Transmit) require separate installs, licensing, or lack S3 integration. ' +
+      'The challenge was **shipping a zero-install GUI** — one binary the user drops in `$PATH` — that handles SSH auth, ' +
+      'live SFTP operations, S3 browsing, and serves a full React frontend, all without Node.js or a separate web server.',
+
+    architecture: {
+      diagram: {
+        description: 'Single Binary: Go Server + Embedded React UI + SSH/SFTP + S3',
+        components: [
+          { label: 'Browser (localhost:9000)', position: { x: 5, y: 50 } },
+          { label: 'Go HTTP Server (embed.FS)', position: { x: 28, y: 50 } },
+          { label: 'SSH Auth + SFTP Layer', position: { x: 55, y: 25 } },
+          { label: 'EC2 File System', position: { x: 80, y: 25 } },
+          { label: 'AWS SDK v2', position: { x: 55, y: 75 } },
+          { label: 'S3 Buckets', position: { x: 80, y: 75 } },
+        ],
+        connections: [
+          { from: 0, to: 1 },
+          { from: 1, to: 2 },
+          { from: 2, to: 3 },
+          { from: 1, to: 4 },
+          { from: 4, to: 5 },
+        ],
+      },
+      code: [
+        {
+          language: 'markdown',
+          label: '0. Binary Bootstrap — main.go',
+          snippet:
+`$ ape [--host ec2-user@54.x.x.x] [--key ~/.ssh/id_rsa]
+  │
+  ├─ Parse CLI flags (host, key, port, bind-addr)
+  ├─ sshClient.Dial("tcp", host+":22") → ssh.NewSession()
+  │    └─ sftp.NewClient(sshConn) → SFTP session
+  ├─ s3Client = aws.NewConfig() → s3.NewFromConfig()
+  │
+  ├─ Embed React build via //go:embed dist/*
+  │    └─ http.FileServer(http.FS(embedFS)) → /
+  │
+  ├─ Register API routes:
+  │    ├─ GET  /api/files?path=   → sftp.ReadDir()
+  │    ├─ GET  /api/file?path=    → sftp.Open() → stream
+  │    ├─ POST /api/upload        → multipart → sftp.Create()
+  │    ├─ POST /api/mkdir         → sftp.MkdirAll()
+  │    ├─ DEL  /api/delete        → sftp.Remove()
+  │    ├─ GET  /api/s3/buckets    → s3.ListBuckets()
+  │    └─ GET  /api/s3/objects    → s3.ListObjectsV2()
+  │
+  └─ http.ListenAndServe(bindAddr, mux)
+       └─ Web UI ready at http://localhost:9000`,
+        },
+        {
+          language: 'markdown',
+          label: '1. Upload Pipeline — multipart → SFTP stream',
+          snippet:
+`POST /api/upload  [multipart/form-data: file, path]
+  │
+  ├─ r.ParseMultipartForm(32 MB)
+  ├─ file, header = r.FormFile("file")
+  ├─ remotePath = r.FormValue("path") + "/" + header.Filename
+  │
+  ├─ sftpClient.Create(remotePath)   ← opens remote file for writing
+  │    └─ If parent dir missing → sftpClient.MkdirAll(dir)
+  │
+  ├─ io.Copy(remoteFile, file)       ← streams bytes, no local temp
+  │    └─ Progress tracked via custom io.Writer wrapper
+  │         └─ SSE stream → client EventSource (drag & drop bar)
+  │
+  └─ res.JSON({ success: true, path: remotePath, size: header.Size })`,
+        },
+        {
+          language: 'markdown',
+          label: '2. React File Explorer — Finder-style UX',
+          snippet:
+`FileExplorer (React 18 + TypeScript)
+  │
+  ├─ State: { path, entries, view: "grid"|"list", selected: Set<string> }
+  │
+  ├─ Grid View: thumbnail cards with file-type icons (Monaco-derived)
+  ├─ List View: sortable table (name / size / modified)
+  │
+  ├─ Right-click context menu:
+  │    ├─ Open in Monaco Editor  → GET /api/file → editor modal
+  │    ├─ Download               → anchor[download] blob URL
+  │    ├─ Rename                 → POST /api/rename
+  │    └─ Delete                 → DEL /api/delete (confirm dialog)
+  │
+  ├─ Drag & Drop zone:
+  │    └─ onDrop → FormData → POST /api/upload → SSE progress bar
+  │
+  ├─ Keyboard shortcuts:
+  │    ├─ Cmd+N   → new folder dialog
+  │    ├─ Delete  → delete selected
+  │    └─ Cmd+C   → copy path to clipboard
+  │
+  └─ Breadcrumb nav: click any segment → navigate to that path`,
+        },
+      ],
+      tradeoffs: [
+        '**Single Binary (embed.FS)**: React build is embedded at compile time via `//go:embed dist/*`. No separate web server, no Node.js runtime — the user runs one binary and gets the full UI.',
+        '**Direct SFTP Streaming**: `io.Copy(remoteFile, file)` streams upload bytes directly to the EC2 filesystem without writing a local temp file, keeping memory footprint flat regardless of file size.',
+        '**SSE Upload Progress**: Server-Sent Events push byte-count updates to the browser without polling. Avoids WebSocket complexity for a one-directional data flow.',
+        '**AWS SDK v2 (no CLI dependency)**: S3 ops use the Go SDK directly rather than shelling out to `aws s3 ls`. Credentials read from `~/.aws/credentials` or env vars — same auth model users already have.',
+        '**Monaco Editor in-browser**: Code editing happens client-side. The Go server only serves the file bytes; Monaco handles syntax highlighting, search, and editing locally, keeping the server stateless.',
+      ],
+    },
+
+    reliability: {
+      coverage: 'CI via GitHub Actions on every push; Go build matrix (linux/amd64, darwin/arm64, darwin/amd64, windows/amd64).',
+      validation: 'Manual integration tests against a live EC2 t2.micro and real S3 buckets. Edge cases exercised across OS-specific SSH key formats (PEM, OpenSSH new format).',
+      validationEdgeCases: [
+        '**SSH auth** — missing key file (clear error), passphrase-protected key (prompt), permission denied (403 JSON)',
+        '**SFTP** — upload to read-only path (permission error surfaced), mkdir race condition (MkdirAll idempotent)',
+        '**S3** — no credentials configured (SDK error surfaced as 401), empty bucket (empty list, no crash)',
+        '**Upload** — file > 32 MB (multipart limit, 413), non-UTF-8 filename (percent-encoded safely)',
+        '**Monaco** — binary file opened for edit (hex fallback mode), very large file (lazy load chunks)',
+      ],
+      errorHandling: [
+        'All API handlers return `{ error: string }` JSON on failure — the React UI surfaces these as toast notifications.',
+        'SFTP session reconnects automatically on disconnect (exponential backoff, max 3 retries).',
+        'S3 errors are unwrapped with `errors.As(err, &apiErr)` to surface the AWS error code to the user.',
+      ],
+    },
+
+    impact: [
+      'Eliminated the `scp`/`ssh`/`vim` workflow for EC2 file management — drag, drop, edit, done.',
+      'Single 16MB binary with zero runtime dependencies; distributable via `brew install` or direct GitHub Release download.',
+      'CI release pipeline (GitHub Actions) cross-compiles for 4 targets (linux/amd64, darwin/arm64, darwin/amd64, windows/amd64) on every tagged release.',
+      'Monaco editor brings VS Code-level syntax highlighting and search to remote files without a plugin.',
+    ],
+  },
+  {
+    slug: 'cortex-sdk',
+    title: 'CORTEX: Camera Optimized Realtime Transmission Exchange',
+    pitch:
+      'Battery-aware VLM middleware SDK for wearable devices like smart glasses. ' +
+      'A 4-layer pipeline sits between the camera and AI APIs — gating redundant frames, cropping to salient regions, and routing to the right model — ' +
+      'targeting 60%+ payload reduction and 2× battery extension without degrading answer quality.',
+    role: 'Solo Researcher & Engineer',
+    techStack: [
+      'Python 3.11+', 'OpenCV', 'scikit-image (SSIM)', 'NumPy', 'Pillow', 'httpx',
+      'Laplacian Blur Detection', 'MSER Text Detection', 'Spectral Saliency',
+    ],
+    links: {
+      repo: 'https://github.com/Dongckim/cortex-sdk',
+    },
+
+    challenge:
+      'Smart glasses stream ~30 fps to VLM APIs even when the scene is static, a whiteboard hasn\'t changed, or the frame is too blurry to be useful. ' +
+      'Each API call costs tokens and drains the wearable battery. ' +
+      'The challenge was building a **drop-in middleware layer** that makes the decision "should this frame be sent?" in real time, ' +
+      'then compresses and crops the accepted frames to the minimum payload that still lets the VLM answer correctly — ' +
+      'all without requiring hardware changes or model retraining.',
+
+    architecture: {
+      diagram: {
+        description: '4-Layer Pipeline: Capture → Compress → Bridge → Memory',
+        components: [
+          { label: 'Smart Glasses / Camera', position: { x: 5, y: 50 } },
+          { label: 'L1: IMU Gate + Blur + SSIM', position: { x: 28, y: 50 } },
+          { label: 'L2: ROI Crop + Adaptive Encode', position: { x: 52, y: 50 } },
+          { label: 'L3: VLM Router + Circuit Breaker', position: { x: 75, y: 25 } },
+          { label: 'VLM API (Claude / GPT / Gemini)', position: { x: 93, y: 25 } },
+          { label: 'L4: Sliding Window Memory', position: { x: 75, y: 75 } },
+        ],
+        connections: [
+          { from: 0, to: 1 },
+          { from: 1, to: 2 },
+          { from: 2, to: 3 },
+          { from: 3, to: 4 },
+          { from: 2, to: 5 },
+          { from: 5, to: 3 },
+        ],
+      },
+      code: [
+        {
+          language: 'markdown',
+          label: 'L1: Capture — "Should we process this frame?"',
+          snippet:
+`New camera frame arrives
+  │
+  ├─ IMU Gate (motion sensor check)
+  │    └─ acceleration below threshold? → skip (camera still, likely static scene)
+  │
+  ├─ Blur Detector (Laplacian variance)
+  │    └─ variance < blur_threshold? → skip (frame too blurry for VLM)
+  │
+  ├─ Scene Change Detector (SSIM vs last accepted frame)
+  │    ├─ SSIM > similarity_threshold (e.g. 0.92)? → skip (scene unchanged)
+  │    └─ SSIM ≤ threshold → ACCEPT
+  │         └─ update "last accepted frame" reference
+  │
+  Result: maximizes camera-off time; only meaningful frames pass to L2
+  Target: 60%+ of frames filtered before any encode/API call`,
+        },
+        {
+          language: 'markdown',
+          label: 'L2: Compress — "What part matters? How small can it be?"',
+          snippet:
+`Accepted frame (from L1)
+  │
+  ├─ Scene Classifier
+  │    ├─ "text-heavy" → MSER text region detection → crop to text bounding box
+  │    ├─ "face/object" → spectral saliency map → crop to salient region
+  │    └─ "general"    → center-weighted crop (safe fallback)
+  │
+  ├─ Hybrid ROI Crop
+  │    └─ expand bounding box by context_margin (avoid cutting off context)
+  │         └─ clamp to frame boundary
+  │
+  ├─ Adaptive Encoder
+  │    ├─ WiFi detected      → JPEG quality 85, max 1024px
+  │    ├─ LTE detected       → JPEG quality 70, max 768px
+  │    └─ low-battery mode   → JPEG quality 55, max 512px
+  │
+  └─ Output: compressed JPEG bytes (typically 40-120 KB vs 2+ MB raw)`,
+        },
+        {
+          language: 'python',
+          label: 'L1 Core — SSIM scene change gate',
+          snippet:
+`def should_process_frame(self, frame: np.ndarray) -> tuple[bool, float]:
+    """
+    Returns (should_process, ssim_score).
+    Rejects frames too similar to the last accepted frame.
+    """
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # First frame always accepted
+    if self._last_frame is None:
+        self._last_frame = gray
+        return True, 0.0
+
+    score, _ = ssim(self._last_frame, gray, full=True)
+
+    if score >= self.similarity_threshold:   # e.g. 0.92
+        return False, score                  # scene unchanged → skip
+
+    self._last_frame = gray                  # update reference
+    return True, score`,
+        },
+      ],
+      tradeoffs: [
+        '**SSIM over pixel diff**: Structural Similarity is robust to minor lighting changes and JPEG compression artifacts that fool naive pixel subtraction. Tunable threshold (0.85–0.95) lets integrators trade sensitivity for battery savings.',
+        '**Laplacian blur before SSIM**: Computing Laplacian variance is O(n) and cheap; SSIM is O(n log n). Running blur check first drops ~15% of frames before the more expensive similarity comparison.',
+        '**Adaptive JPEG quality (not resolution scaling)**: Dropping quality 85→55 cuts payload ~3× with minimal VLM accuracy loss on text/object recognition. Resolution scaling can cut off context; quality reduction is safer for most VLM tasks.',
+        '**Stateful resampler across chunks**: SSIM reference frame and ROI classifier state persist across frames, enabling temporal coherence without a full video encoder.',
+        '**Circuit breaker in L3 (planned)**: VLM router tracks error rate per provider. On >3 consecutive failures, it opens the circuit (stops sending to that provider for 30 s) and falls back to the next configured model.',
+      ],
+    },
+
+    reliability: {
+      coverage: '80+ pytest tests, 99% coverage on L1 + L2. SSIM gate, blur detector, ROI crop, and adaptive encoder each have isolated unit tests with synthetic frames.',
+      validation: 'Webcam demo with real-time HUD overlays accepted/rejected frame counts, SSIM scores, and payload sizes. Validated against 3 scene types: static whiteboard, hand movement, walking.',
+      validationEdgeCases: [
+        '**All-black / all-white frames** — Laplacian variance = 0 → rejected as blurry before SSIM',
+        '**Scene flash (sudden brightness change)** — SSIM drops to ~0.4 even with no semantic change → threshold tuning guide in docs',
+        '**MSER on low-contrast text** — falls back to center crop when fewer than 5 text regions detected',
+        '**Tiny frames (<64×64)** — spatial pyramid pooling skipped, direct encode',
+        '**Network switch WiFi→LTE mid-session** — adaptive encoder re-reads network state per frame (no restart needed)',
+      ],
+      errorHandling: [
+        'L1 gate errors (OpenCV decode failure) return `(False, 0.0)` — frame is dropped, not crashed.',
+        'L2 ROI crop out-of-bounds is clamped to frame size with `np.clip`; never raises IndexError.',
+        'L3 VLM call failure increments error counter; circuit breaker opens after threshold (L3 planned).',
+      ],
+    },
+
+    impact: [
+      'Targets **60%+ reduction in frames sent to VLM APIs**, directly cutting token costs and API latency.',
+      'Targets **2× battery extension** on wearables by maximizing camera-off time via IMU + SSIM gating.',
+      '99% test coverage on L1 + L2 with 80+ pytest cases — production-ready filtering pipeline.',
+      'Drop-in SDK design: integrators call `pipeline.process(frame)` and receive `(should_call_vlm, payload_bytes)` — zero changes to existing VLM integration code.',
+      'Accompanied by an arXiv paper (cortex-arxiv-v5) formalizing the 4-layer architecture and benchmark methodology.',
+    ],
+  },
+  {
+    slug: 'tryl',
+    title: 'Tryl: AI Fashion Try-On',
+    pitch:
+      'Full-stack monorepo for an AI-powered virtual fashion try-on product. ' +
+      'A Chrome extension detects clothing items on any shopping page, a FastAPI backend manages fitting profiles and job dispatch, ' +
+      'and an async Redis worker queue processes try-on image generation end-to-end.',
+    role: 'Full Stack Engineer (solo)',
+    techStack: [
+      'React', 'TypeScript', 'FastAPI', 'Python', 'PostgreSQL',
+      'Redis', 'Chrome Extension (MV3)', 'pnpm workspaces',
+    ],
+    links: {
+      repo: 'https://github.com/Dongckim/tryl-beta',
+    },
+
+    challenge:
+      'AI try-on generation takes 5–30 seconds per image — too slow for a synchronous API response. ' +
+      'At the same time, the product needs to work across arbitrary shopping pages (Zara, H&M, ASOS) where product images live behind inconsistent DOM structures. ' +
+      'The core engineering challenge was building an **async job pipeline** (create → queue → process → archive) ' +
+      'that decouples the user\'s request from the slow generation step, ' +
+      'while the Chrome extension handles product detection across heterogeneous storefronts without brittle CSS selectors.',
+
+    architecture: {
+      diagram: {
+        description: 'Chrome Extension → FastAPI → Redis Queue → Worker → Archive',
+        components: [
+          { label: 'User (Web App / Extension)', position: { x: 5, y: 50 } },
+          { label: 'Chrome Extension (MV3)', position: { x: 25, y: 25 } },
+          { label: 'FastAPI Backend', position: { x: 50, y: 50 } },
+          { label: 'Redis Job Queue', position: { x: 70, y: 25 } },
+          { label: 'Try-On Worker', position: { x: 88, y: 50 } },
+          { label: 'PostgreSQL + Archive', position: { x: 70, y: 75 } },
+        ],
+        connections: [
+          { from: 0, to: 1 },
+          { from: 1, to: 2 },
+          { from: 0, to: 2 },
+          { from: 2, to: 3 },
+          { from: 3, to: 4 },
+          { from: 4, to: 5 },
+          { from: 2, to: 5 },
+        ],
+      },
+      code: [
+        {
+          language: 'markdown',
+          label: '0. Monorepo Structure (pnpm workspaces)',
+          snippet:
+`tryl/
+  ├─ apps/
+  │    ├─ web/          React + TypeScript — auth, fitting profiles, archive
+  │    ├─ extension/    Chrome MV3 — product detection on shopping pages
+  │    ├─ api/          FastAPI — REST API for profiles, jobs, archive
+  │    └─ worker/       Python — async try-on job processor
+  ├─ packages/
+  │    ├─ shared-types/ TypeScript types shared by web + extension
+  │    └─ config/       Shared ESLint + TS config
+  └─ pnpm-workspace.yaml`,
+        },
+        {
+          language: 'markdown',
+          label: '1. Try-On Job Pipeline — create → queue → process → archive',
+          snippet:
+`POST /api/tryon/jobs  { profile_id, product_image_url, product_metadata }
+  │
+  ├─ Validate profile exists + user owns it
+  ├─ Resolve product: download image → store to S3-compatible store
+  ├─ INSERT job { status: "queued", profile_id, product_image_key }
+  │
+  └─ redis.lpush("tryon:queue", job_id)   ← enqueue
+       │
+       ▼  [Worker process — separate container]
+  redis.brpop("tryon:queue")              ← blocking pop
+       │
+       ├─ UPDATE job { status: "processing" }
+       ├─ Fetch fitting profile image + product image
+       ├─ Call try-on AI model API (async httpx)
+       │    └─ Poll / stream until result image ready
+       ├─ Store result image
+       ├─ UPDATE job { status: "completed", result_image_key }
+       │
+       └─ On any error:
+            UPDATE job { status: "failed", error_message }
+
+GET /api/tryon/jobs/{job_id}   → { status, result_image_url? }
+GET /api/tryon/archive         → paginated completed jobs`,
+        },
+        {
+          language: 'markdown',
+          label: '2. Chrome Extension — product detection across storefronts',
+          snippet:
+`Content script injected on shopping page load
+  │
+  ├─ DOM scan: heuristic selectors for product images
+  │    ├─ meta[property="og:image"]           ← most reliable
+  │    ├─ [data-testid*="product"] img         ← framework apps (Next.js)
+  │    ├─ .pdp-image, .product-image img       ← legacy CSS patterns
+  │    └─ largest visible <img> (fallback)
+  │
+  ├─ Inject "Try with Tryl" button adjacent to detected image
+  │
+  └─ On button click:
+       ├─ Send product_image_url + page_url to background service worker
+       ├─ background → POST /api/tryon/jobs (with auth cookie / token)
+       ├─ Receive job_id → open popup with job status polling
+       │    └─ GET /api/tryon/jobs/{job_id} every 3 s
+       └─ On "completed" → display result image in popup overlay`,
+        },
+      ],
+      tradeoffs: [
+        '**Redis BRPOP (blocking pop) over polling**: Worker blocks on the queue with no CPU burn between jobs. A single `brpop` call replaces a sleep-poll loop and ensures FIFO ordering.',
+        '**Status field (queued/processing/completed/failed) over separate tables**: Job lifecycle is tracked in a single `status` column with an `updated_at` timestamp. Simpler to query, index, and reason about than event-sourcing for an MVP.',
+        '**Heuristic DOM selectors + og:image fallback**: Structured site-specific scrapers break on every storefront redesign. Prioritizing `og:image` (set by site owners for sharing) gives a stable, high-quality image with minimal fragility.',
+        '**Chrome MV3 (Manifest V3)**: MV3 service workers replace persistent background pages, which Chrome is retiring. The trade-off is that service workers can be suspended between events, requiring the extension to re-establish connections per user action.',
+        '**pnpm workspaces over separate repos**: Shared TypeScript types (`shared-types`) flow directly to both `web` and `extension` without a publish step. The trade-off is a slightly more complex CI matrix (build order matters).',
+      ],
+    },
+
+    reliability: {
+      validation: 'Manual end-to-end testing across 3 shopping storefronts (Zara, ASOS, H&M). Job pipeline tested with simulated slow worker (10 s artificial delay) to verify status polling behavior.',
+      validationEdgeCases: [
+        '**Worker crash mid-job** — job stays in "processing"; a watchdog timer re-queues jobs stuck for >2 min',
+        '**Extension on SPA (React/Next.js storefront)** — MutationObserver detects route changes and re-runs product detection on navigation',
+        '**User submits duplicate job** — idempotency check on (profile_id, product_image_url) returns existing job_id',
+        '**No og:image and no matching selector** — extension shows "Could not detect product image" with manual URL input fallback',
+        '**Auth token expired while polling** — 401 triggers silent refresh; poll continues after new token issued',
+      ],
+      errorHandling: [
+        'Worker wraps the entire job in try/except; any unhandled error sets `status = "failed"` with the exception message stored in `error_message` column.',
+        'FastAPI dependency injection validates auth + profile ownership before any job creation — 403 returned immediately on mismatch.',
+        'Chrome extension background service worker catches fetch failures and surfaces them in the popup as user-readable messages (not raw status codes).',
+      ],
+    },
+
+    impact: [
+      'Full monorepo MVP shipped with 4 apps (web, extension, API, worker) sharing types and config via pnpm workspaces.',
+      'Async job pipeline decouples slow AI generation from user-facing request — job status is available immediately, result arrives when ready.',
+      'Chrome extension works across heterogeneous storefronts (Zara, ASOS, H&M) using a layered fallback selector strategy.',
+      'Redis BRPOP queue ensures FIFO job ordering with zero CPU burn between jobs — horizontally scalable by adding worker containers.',
+    ],
+  },
 ];
 
 export function getProjectBySlug(slug: string): ProjectDetail | undefined {

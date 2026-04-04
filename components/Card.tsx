@@ -10,9 +10,9 @@ interface CardProps extends Project {
 
 export default function Card({ id, title, description, tags, icon: Icon, colSpan, index }: CardProps) {
   const colSpanClass = colSpan === 1 ? "md:col-span-1" : "md:col-span-2";
-  
+
   return (
-    <Link href={`/projects/${id}`}>
+    <Link href={`/projects/${id}`} className={colSpanClass}>
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -21,11 +21,11 @@ export default function Card({ id, title, description, tags, icon: Icon, colSpan
           delay: 1.4 + index * 0.1,
           ease: [0.22, 1, 0.36, 1]
         }}
-        whileHover={{ 
+        whileHover={{
           y: -2,
           transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
         }}
-        className={`group relative ${colSpanClass} bg-surface rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md border border-border`}
+        className="group relative h-full bg-surface rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md border border-border"
       >
         <div className="flex flex-col h-full">
           {/* Icon */}

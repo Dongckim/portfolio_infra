@@ -1,4 +1,4 @@
-import { Activity, Terminal, FileText, Cpu, Shield } from "lucide-react";
+import { Activity, Terminal, FileText, Cpu, Shield, Server, Camera, ShoppingBag } from "lucide-react";
 
 export interface Project {
   id: string;
@@ -50,6 +50,30 @@ export const projects: Project[] = [
     icon: Terminal,
     colSpan: 1,
   },
+  {
+    id: "ape",
+    title: "A.P.E: AWS Platform Explorer",
+    description: "A Finder-style browser GUI for EC2 file management and S3 browsing — drag & drop uploads, Monaco editor, and multi-server connections, all shipped as a single 16MB Go binary.",
+    tags: ["Go", "React", "TypeScript", "AWS SDK", "SFTP", "SSH"],
+    icon: Server,
+    colSpan: 2,
+  },
+  {
+    id: "cortex-sdk",
+    title: "CORTEX: Battery-Aware VLM Middleware",
+    description: "A 4-layer SDK sitting between wearable cameras and VLM APIs. Filters redundant frames via SSIM, Laplacian blur, and IMU gating — targeting 60%+ payload reduction and 2× battery extension.",
+    tags: ["Python", "OpenCV", "scikit-image", "SSIM", "VLM"],
+    icon: Camera,
+    colSpan: 1,
+  },
+  {
+    id: "tryl",
+    title: "Tryl: AI Fashion Try-On",
+    description: "Monorepo product with a Chrome extension for in-page product detection, FastAPI backend, and async Redis worker queue for AI-powered virtual try-on image generation.",
+    tags: ["FastAPI", "React", "TypeScript", "Redis", "PostgreSQL", "Python"],
+    icon: ShoppingBag,
+    colSpan: 1,
+  },
 ];
 
 export interface Highlight {
@@ -61,7 +85,6 @@ export interface Highlight {
 export const highlights: Highlight[] = [
   { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
   { title: "MIT Reality Hack 2026 - Meta Track Winner" },
-  { title: "Scheduled to attend HarvardXR 2026 Conference", href: "https://harvardxr.com/2026/program-2026", linkText: "HarvardXR 2026 Conference" },
   { title: "Scheduled to attend AWE USA 2026 Conference (World's #1 XR + AI Event)", href: "https://www.awexr.com/blog/1288-road-to-awe-2026-i-spatial", linkText: "AWE USA 2026 Conference" },
 ];
 
