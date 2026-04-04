@@ -83,6 +83,7 @@ export interface Highlight {
 }
 
 export const highlights: Highlight[] = [
+  { title: "Founder of Tryl", href: "https://tryl.me", linkText: "Tryl" },
   { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
   { title: "MIT Reality Hack 2026 - Meta Track Winner" },
   { title: "Scheduled to attend AWE USA 2026 Conference (World's #1 XR + AI Event)", href: "https://www.awexr.com/blog/1288-road-to-awe-2026-i-spatial", linkText: "AWE USA 2026 Conference" },
