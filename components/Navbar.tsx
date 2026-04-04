@@ -110,7 +110,7 @@ export default function Navbar() {
         {
           title: "Resources",
           items: [
-            { label: "Resume", href: "https://drive.google.com/file/d/1A_Axi5jiqOgkQX29WL8iK33kjys2O1V7/view?usp=sharing" },
+            { label: "Resume", href: "https://drive.google.com/file/d/1IzFm3snCqi1K-97DKgGH4yxp6PeIfL73/view?usp=sharing" },
             { label: "XR Portfolio", href: "https://dongchan.xyz" },
           ],
         },
