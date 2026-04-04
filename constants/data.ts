@@ -93,5 +93,8 @@ export const highlightImages: string[] = [
   "/mit-reality-hack-2026-2.jpg",
   "/mit-reality-hack-2026-3.jpg",
   "/mit-reality-hack-2026-4.jpg",
+  "/tryl-1.png",
+  "/tryl-2.png",
+  "/tryl-3.png",
 ];
 
