@@ -142,8 +142,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           <div className="space-y-8">
             <div>
               <h3 className="text-xl font-semibold text-white mb-4">System Architecture</h3>
-              {/* Diagram only: full-bleed breakout, fixed height so elements stay small */}
-              <div className="relative w-screen left-1/2 -translate-x-1/2">
+              {/* Diagram only: wider than content but not full-bleed, Apple-style */}
+              <div className="relative w-screen left-1/2 -translate-x-1/2 px-6 sm:px-12 lg:px-20 xl:px-28">
                 <DiagramPlaceholder
                   description={project.architecture.diagram.description}
                   components={project.architecture.diagram.components}

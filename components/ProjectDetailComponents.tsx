@@ -48,12 +48,15 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
     return { width, height };
   };
 
+  // Scale x from 0-100 → 0-200 so elements spread across the wider viewBox
+  const sx = (x: number) => x * 2;
+
   return (
-    <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-lg p-8 h-[500px] overflow-hidden">
-      <p className="text-xs text-gray-400 mb-6 uppercase tracking-wider">{description}</p>
+    <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-2xl p-8 h-[500px] overflow-hidden">
+      <p className="text-xs text-gray-400 mb-4 uppercase tracking-wider">{description}</p>
 
       <svg
-        viewBox="0 0 100 100"
+        viewBox="0 0 200 100"
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
       >
@@ -65,14 +68,14 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
           return (
             <line
               key={idx}
-              x1={from.position.x}
+              x1={sx(from.position.x)}
               y1={from.position.y}
-              x2={to.position.x}
+              x2={sx(to.position.x)}
               y2={to.position.y}
               stroke="#4A9EFF"
-              strokeWidth="0.4"
-              strokeDasharray="2,2"
-              opacity={0.5}
+              strokeWidth="0.3"
+              strokeDasharray="1.5,1.5"
+              opacity={0.45}
             />
           );
         })}
@@ -80,7 +83,8 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
         {components.map((comp, idx) => {
           const { width, height } = getBoxDimensions(comp.label);
           const words = comp.label.split(' ');
-          const boxX = comp.position.x - width / 2;
+          const cx = sx(comp.position.x);
+          const boxX = cx - width / 2;
           const boxY = comp.position.y - height / 2;
 
           return (
@@ -92,14 +96,14 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
                 height={height}
                 fill="#2D2D30"
                 stroke="#4A9EFF"
-                strokeWidth="0.4"
+                strokeWidth="0.35"
                 rx="1.5"
                 opacity={0.9}
               />
               {words.map((word, wordIdx) => (
                 <text
                   key={wordIdx}
-                  x={comp.position.x}
+                  x={cx}
                   y={boxY + (wordIdx + 1) * 2.8 + 1}
                   textAnchor="middle"
                   fontSize="2.2"
