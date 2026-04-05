@@ -71,7 +71,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       {/* C: TOC Sidebar */}
       <TableOfContents sections={TOC_SECTIONS} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-42 pb-12 md:pb-20">
+      {/* Header + Challenge: constrained */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-42">
 
         {/* Header Section */}
         <motion.header
@@ -135,7 +136,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           </p>
         </Section>
 
-        {/* Architecture & Deep Dive */}
+      </div>
+
+      {/* Architecture: full screen width */}
+      <div className="w-full px-4 sm:px-8 lg:px-16 xl:px-24">
         <Section id="architecture" title="Architecture & Deep Dive">
           <div className="space-y-8">
             <div>
@@ -180,6 +184,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             </div>
           </div>
         </Section>
+      </div>
+
+      {/* Reliability + rest: constrained */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
 
         {/* Reliability & Validation */}
         <Section id="reliability" title="Reliability & Validation">
