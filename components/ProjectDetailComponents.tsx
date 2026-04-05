@@ -49,7 +49,7 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
   };
 
   return (
-    <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-lg p-8 min-h-[500px] overflow-hidden">
+    <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-lg p-8 h-[500px] overflow-hidden">
       <p className="text-xs text-gray-400 mb-6 uppercase tracking-wider">{description}</p>
 
       <svg

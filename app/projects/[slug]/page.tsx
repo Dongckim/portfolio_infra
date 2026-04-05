@@ -136,19 +136,20 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           </p>
         </Section>
 
-      </div>
 
-      {/* Architecture: full screen width */}
-      <div className="w-full px-4 sm:px-8 lg:px-16 xl:px-24">
+        {/* Architecture & Deep Dive */}
         <Section id="architecture" title="Architecture & Deep Dive">
           <div className="space-y-8">
             <div>
               <h3 className="text-xl font-semibold text-white mb-4">System Architecture</h3>
-              <DiagramPlaceholder
-                description={project.architecture.diagram.description}
-                components={project.architecture.diagram.components}
-                connections={project.architecture.diagram.connections}
-              />
+              {/* Diagram only: full-bleed breakout, fixed height so elements stay small */}
+              <div className="relative w-screen left-1/2 -translate-x-1/2">
+                <DiagramPlaceholder
+                  description={project.architecture.diagram.description}
+                  components={project.architecture.diagram.components}
+                  connections={project.architecture.diagram.connections}
+                />
+              </div>
             </div>
 
             {Array.isArray(project.architecture.code) ? (
@@ -184,10 +185,6 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             </div>
           </div>
         </Section>
-      </div>
-
-      {/* Reliability + rest: constrained */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
 
         {/* Reliability & Validation */}
         <Section id="reliability" title="Reliability & Validation">
