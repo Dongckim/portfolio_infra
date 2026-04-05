@@ -148,6 +148,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                   description={project.architecture.diagram.description}
                   components={project.architecture.diagram.components}
                   connections={project.architecture.diagram.connections}
+                  groups={project.architecture.diagram.groups}
                 />
               </div>
             </div>

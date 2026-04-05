@@ -52,7 +52,7 @@ export const projects: Project[] = [
   },
   {
     id: "xr-optimization",
-    title: "XR Latency Optimization",
+    title: "SM REALIVE",
     description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
     tags: ["Unity", "Profiling", "Latency-free"],
     icon: Cpu,
@@ -80,12 +80,19 @@ export interface Highlight {
   title: string;
   href?: string;
   linkText?: string;
+  badge?: { text: string; href: string };
 }
 
 export const highlights: Highlight[] = [
   { title: "Founder of Tryl: AI Fashion Try-On (tryl.me)", href: "https://tryl.me", linkText: "tryl.me" },
   { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
-  { title: "MIT Reality Hack 2026 - Meta Track Winner" },
+  {
+    title: "MIT Reality Hack 2026 - Meta Track Winner",
+    badge: {
+      text: "Featured on Meta Developer Blog",
+      href: "https://developers.meta.com/blog/explore-whats-possible-with-wearables-device-access-toolkit/?utm_source=social-li&utm_medium=M4D&utm_campaign=organic&utm_content=wearables",
+    },
+  },
   { title: "Scheduled to attend AWE USA 2026 Conference (World's #1 XR + AI Event)", href: "https://www.awexr.com/blog/1288-road-to-awe-2026-i-spatial", linkText: "AWE USA 2026 Conference" },
 ];
 

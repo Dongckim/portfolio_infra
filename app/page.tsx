@@ -137,31 +137,46 @@ export default function Home() {
                   </p>
                   <ul className="mt-5 space-y-2 text-textPrimary font-medium tracking-tight">
                     {highlights.map((item) => (
-                      <li key={item.title} className="text-base md:text-lg leading-snug flex items-baseline gap-2">
-                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent mt-1.5" aria-hidden />
-                        {item.href && item.linkText ? (
-                          <span>
-                            {item.title.split(item.linkText).map((part, i, arr) => (
-                              i < arr.length - 1 ? (
-                                <span key={i}>
-                                  {part}
-                                  <a
-                                    href={item.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline decoration-accent/40 underline-offset-2 hover:decoration-accent transition-colors"
-                                  >
-                                    {item.linkText}
-                                  </a>
-                                </span>
-                              ) : (
-                                <span key={i}>{part}</span>
-                              )
-                            ))}
-                          </span>
-                        ) : (
-                          <span>{item.title}</span>
-                        )}
+                      <li key={item.title} className="text-base md:text-lg leading-snug flex items-center gap-2">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent" aria-hidden />
+                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          {item.href && item.linkText ? (
+                            <span>
+                              {item.title.split(item.linkText).map((part, i, arr) => (
+                                i < arr.length - 1 ? (
+                                  <span key={i}>
+                                    {part}
+                                    <a
+                                      href={item.href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="underline decoration-accent/40 underline-offset-2 hover:decoration-accent transition-colors"
+                                    >
+                                      {item.linkText}
+                                    </a>
+                                  </span>
+                                ) : (
+                                  <span key={i}>{part}</span>
+                                )
+                              ))}
+                            </span>
+                          ) : (
+                            <span>{item.title}</span>
+                          )}
+                          {item.badge && (
+                            <a
+                              href={item.badge.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#0A84FF]/10 text-[#4A9EFF] border border-[#0A84FF]/20 hover:bg-[#0A84FF]/20 transition-colors whitespace-nowrap"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              {item.badge.text}
+                            </a>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>

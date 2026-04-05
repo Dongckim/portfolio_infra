@@ -13,7 +13,8 @@ export interface ProjectDetail {
     diagram: {
       description: string;
       components: Array<{ label: string; position: { x: number; y: number } }>;
-      connections: Array<{ from: number; to: number }>;
+      connections: Array<{ from: number; to: number; label?: string }>;
+      groups?: Array<{ label: string; members: number[]; color?: string }>;
     };
     code: {
       language: string;
@@ -67,23 +68,30 @@ export const projectDetails: ProjectDetail[] = [
   
     architecture: {
       diagram: {
-        description: '13 s → 5 s Latency Pipeline + Zero-Dep Audio Resampling + Crash-Safe Async',
+        description: '13 s → 5 s Upload-Analyze + WebSocket Realtime Tutor + OAuth',
         components: [
-          { label: 'iOS Client (Ray-Ban Meta)', position: { x: 5, y: 50 } },
-          { label: 'POST /api/upload-and-analyze', position: { x: 25, y: 50 } },
-          { label: 'S3 Upload', position: { x: 45, y: 30 } },
-          { label: 'Presigned Read URL (1 h)', position: { x: 45, y: 70 } },
-          { label: 'GPT-4.1 Vision (direct S3 URL)', position: { x: 65, y: 50 } },
-          { label: 'Fire-and-Forget DB Save', position: { x: 85, y: 30 } },
-          { label: 'WS /ws → OpenAI Realtime (context push)', position: { x: 85, y: 70 } },
+          { label: 'Ray-Ban Meta Glasses', position: { x: 5, y: 50 } },
+          { label: 'Express API Server', position: { x: 22, y: 50 } },
+          { label: 'Google OAuth + JWT', position: { x: 22, y: 80 } },
+          { label: 'AWS S3 (image store)', position: { x: 42, y: 28 } },
+          { label: 'Presigned URL (1 h)', position: { x: 58, y: 28 } },
+          { label: 'GPT-4.1 Vision API', position: { x: 58, y: 55 } },
+          { label: 'Session & Topic Tracker', position: { x: 75, y: 35 } },
+          { label: 'PostgreSQL (RDS)', position: { x: 90, y: 22 } },
+          { label: 'OpenAI Realtime WS', position: { x: 75, y: 72 } },
+          { label: 'Fire-and-Forget Workers', position: { x: 90, y: 55 } },
         ],
         connections: [
           { from: 0, to: 1 },
-          { from: 1, to: 2 },
+          { from: 0, to: 2 },
           { from: 1, to: 3 },
           { from: 3, to: 4 },
           { from: 4, to: 5 },
-          { from: 4, to: 6 },
+          { from: 5, to: 6 },
+          { from: 6, to: 7 },
+          { from: 5, to: 9 },
+          { from: 1, to: 8 },
+          { from: 8, to: 9 },
         ],
       },
       code: [
@@ -419,14 +427,17 @@ export const projectDetails: ProjectDetail[] = [
     challenge: 'Tracking content changes in non-standardized HTML (like Wikipedia) creates a "Signal-to-Noise" problem. Naive diffing triggers false positives due to dynamic elements like ads, navigation bars, or timestamps. The challenge was to architect a pipeline that isolates **semantic content** (cleaning the DOM) and automates the entire lifecycle—from scraping to archival to diff reporting—without human intervention.',
     architecture: {
       diagram: {
-        description: 'Automated Content Drift Pipeline',
+        description: 'Cron → Scrape → Sanitize → Snapshot → Diff → Report',
         components: [
-          { label: 'Cron Scheduler', position: { x: 10, y: 50 } },
-          { label: 'Ingestion (CSV/Net)', position: { x: 30, y: 50 } },
-          { label: 'DOM Sanitizer', position: { x: 50, y: 30 } },
-          { label: 'Markdown Converter', position: { x: 50, y: 70 } },
-          { label: 'Snapshot Archivist', position: { x: 70, y: 50 } },
-          { label: 'Diff Engine', position: { x: 90, y: 50 } },
+          { label: 'Cron Scheduler', position: { x: 7, y: 50 } },
+          { label: 'URL Source (CSV)', position: { x: 20, y: 50 } },
+          { label: 'HTTP Fetcher', position: { x: 35, y: 50 } },
+          { label: 'BeautifulSoup Parser', position: { x: 50, y: 28 } },
+          { label: 'DOM Sanitizer', position: { x: 65, y: 28 } },
+          { label: 'html2md Converter', position: { x: 50, y: 72 } },
+          { label: 'tar.gz Archiver', position: { x: 78, y: 50 } },
+          { label: 'diffcheck Engine', position: { x: 91, y: 28 } },
+          { label: 'Change Report', position: { x: 91, y: 72 } },
         ],
         connections: [
           { from: 0, to: 1 },
@@ -434,6 +445,10 @@ export const projectDetails: ProjectDetail[] = [
           { from: 2, to: 3 },
           { from: 3, to: 4 },
           { from: 4, to: 5 },
+          { from: 5, to: 6 },
+          { from: 6, to: 7 },
+          { from: 7, to: 8 },
+          { from: 2, to: 5 },
         ],
       },
       code: {
@@ -478,20 +493,29 @@ export const projectDetails: ProjectDetail[] = [
     challenge: 'Standard shell backup scripts (using `cp` or simple `tar`) often suffer from "Silent Failures"—where a script exits successfully even if partial data corruption occurred. The engineering challenge was to design a system that guarantees **data integrity** by strictly validating input states, enforcing atomic operations, and allowing granular control over file exclusions via `.bassignore` without hardcoding paths.',
     architecture: {
       diagram: {
-        description: 'Logic Flow: Priority handling between CLI Args and Config Files',
+        description: 'CLI → Validate → Exclude → Dry-run → tar/gzip → Dual-stream Log',
         components: [
-          { label: 'Input (CLI/Config)', position: { x: 10, y: 50 } },
-          { label: 'Validation Layer', position: { x: 35, y: 50 } },
-          { label: 'Exclusion Parser', position: { x: 60, y: 30 } },
-          { label: 'Dry-Run Engine', position: { x: 60, y: 70 } },
-          { label: 'Tar/Gzip Core', position: { x: 85, y: 50 } },
+          { label: 'User / Cron', position: { x: 7, y: 50 } },
+          { label: 'CLI Arg Parser', position: { x: 22, y: 28 } },
+          { label: 'archive.conf Reader', position: { x: 22, y: 72 } },
+          { label: 'Path Validator', position: { x: 40, y: 50 } },
+          { label: '.bassignore Parser', position: { x: 57, y: 28 } },
+          { label: 'Dry-run Engine', position: { x: 57, y: 72 } },
+          { label: 'tar Compression Core', position: { x: 75, y: 50 } },
+          { label: '.tar.gz Archive', position: { x: 90, y: 28 } },
+          { label: 'archive.log (stdout/stderr)', position: { x: 90, y: 72 } },
         ],
         connections: [
           { from: 0, to: 1 },
-          { from: 1, to: 2 },
+          { from: 0, to: 2 },
           { from: 1, to: 3 },
-          { from: 2, to: 4 },
+          { from: 2, to: 3 },
           { from: 3, to: 4 },
+          { from: 3, to: 5 },
+          { from: 4, to: 6 },
+          { from: 5, to: 6 },
+          { from: 6, to: 7 },
+          { from: 6, to: 8 },
         ],
       },
       code: {
@@ -583,7 +607,7 @@ def convert_emphasis(line: str) -> str:
   },
   {
     slug: 'xr-optimization',
-    title: 'XR Latency Optimization',
+    title: 'SM REALIVE',
     pitch: 'Master-Client network architecture achieving <50ms synchronization accuracy across standalone VR headsets.',
     role: 'VR Software Engineer',
     techStack: ['Node.js', 'Socket.io', 'Unity', 'C#', 'Docker'],
@@ -594,20 +618,26 @@ def convert_emphasis(line: str) -> str:
     challenge: 'In a shared VR concert experience with 5+ Meta Quest 3 devices, standard network replication caused **Frame Desynchronization (Drift)** of >100ms due to variable packet arrival times. This latency variance caused severe motion sickness and broke immersion. The challenge was to ensure that `VideoPlayer.Play()` triggers at the **exact same physical moment** on all devices, regardless of individual network jitter.',
     architecture: {
       diagram: {
-        description: 'NTP-like Time Synchronization Protocol',
+        description: 'Master-Client NTP Sync · Play / Pause / Seek · HMS Fleet Management',
         components: [
-          { label: 'Master Server', position: { x: 50, y: 10 } },
-          { label: 'RTT Calculator', position: { x: 50, y: 30 } },
-          { label: 'Client A (Quest 3)', position: { x: 20, y: 70 } },
-          { label: 'Client B (Quest 3)', position: { x: 80, y: 70 } },
-          { label: 'Local Scheduler', position: { x: 50, y: 90 } },
+          { label: 'Master Server', position: { x: 30, y: 22 } },
+          { label: 'Play / Pause / Seek', position: { x: 68, y: 22 } },
+          { label: 'Client A (Quest 3)', position: { x: 10, y: 68 } },
+          { label: 'Client B (Quest 3)', position: { x: 28, y: 68 } },
+          { label: 'Client C (Quest 3)', position: { x: 50, y: 68 } },
+          { label: 'Client D (Quest 3)', position: { x: 72, y: 68 } },
+          { label: 'Client E (Quest 3)', position: { x: 90, y: 68 } },
         ],
         connections: [
           { from: 0, to: 1 },
-          { from: 1, to: 2 },
-          { from: 1, to: 3 },
-          { from: 2, to: 4 },
-          { from: 3, to: 4 },
+          { from: 0, to: 2, label: 'RTT ±33ms' },
+          { from: 0, to: 3, label: 'RTT ±33ms' },
+          { from: 0, to: 4, label: 'RTT ±33ms' },
+          { from: 0, to: 5, label: 'RTT ±33ms' },
+          { from: 0, to: 6, label: 'RTT ±33ms' },
+        ],
+        groups: [
+          { label: 'Meta Horizon Managed Services (HMS)', members: [2, 3, 4, 5, 6], color: '#5AC8FA' },
         ],
       },
       code: {
@@ -660,23 +690,27 @@ public void SchedulePlayback(long targetServerTime) {
     challenge: 'Healthcare organizations face massive financial and legal risks from HIPAA violations—often caused by simple human mistakes. Policy documents are long, complex, and constantly changing, making it unrealistic for staff to keep up. The core challenge was creating a "living, zero-maintenance policy assistant" that always provides the right answer at the right time, preventing AI hallucinations while ensuring 100% accuracy in a safety-critical environment.',
     architecture: {
       diagram: {
-        description: 'RAG-Powered Security Assistant Architecture',
+        description: 'Teams + React → Express → Risk Intercept → RAG → Policy DB → Incident Alert',
         components: [
-          { label: 'Microsoft Teams Client', position: { x: 10, y: 50 } },
-          { label: 'React Frontend', position: { x: 30, y: 30 } },
-          { label: 'Node.js/Express API', position: { x: 50, y: 50 } },
-          { label: 'NeuralSeek RAG Engine', position: { x: 70, y: 30 } },
-          { label: 'Policy PDF Database', position: { x: 70, y: 70 } },
-          { label: 'Discord Webhook', position: { x: 90, y: 50 } },
-          { label: 'Security Team Alert', position: { x: 90, y: 70 } },
+          { label: 'MS Teams Bot', position: { x: 6, y: 30 } },
+          { label: 'React Frontend', position: { x: 6, y: 70 } },
+          { label: 'Express API Server', position: { x: 25, y: 50 } },
+          { label: 'Risk Interceptor', position: { x: 45, y: 28 } },
+          { label: 'NeuralSeek RAG', position: { x: 65, y: 28 } },
+          { label: 'Policy PDF DB', position: { x: 82, y: 22 } },
+          { label: 'MySQL (audit log)', position: { x: 82, y: 50 } },
+          { label: 'Discord Webhook', position: { x: 65, y: 72 } },
+          { label: 'Security Team Alert', position: { x: 82, y: 78 } },
         ],
         connections: [
-          { from: 0, to: 1 },
+          { from: 0, to: 2 },
           { from: 1, to: 2 },
           { from: 2, to: 3 },
           { from: 3, to: 4 },
-          { from: 2, to: 5 },
-          { from: 5, to: 6 },
+          { from: 4, to: 5 },
+          { from: 4, to: 6 },
+          { from: 3, to: 7 },
+          { from: 7, to: 8 },
         ],
       },
       code: {
@@ -744,21 +778,27 @@ async function handleUserQuery(query: string, userId: string) {
 
     architecture: {
       diagram: {
-        description: 'Single Binary: Go Server + Embedded React UI + SSH/SFTP + S3',
+        description: 'Single 16MB Go Binary: Embedded React + SSH/SFTP + S3 + Monaco',
         components: [
           { label: 'Browser (localhost:9000)', position: { x: 5, y: 50 } },
-          { label: 'Go HTTP Server (embed.FS)', position: { x: 28, y: 50 } },
-          { label: 'SSH Auth + SFTP Layer', position: { x: 55, y: 25 } },
-          { label: 'EC2 File System', position: { x: 80, y: 25 } },
-          { label: 'AWS SDK v2', position: { x: 55, y: 75 } },
-          { label: 'S3 Buckets', position: { x: 80, y: 75 } },
+          { label: 'Go HTTP Server (embed.FS)', position: { x: 22, y: 50 } },
+          { label: 'REST API Router', position: { x: 40, y: 50 } },
+          { label: 'SSH Auth Manager', position: { x: 57, y: 22 } },
+          { label: 'SFTP Client', position: { x: 73, y: 22 } },
+          { label: 'EC2 File System', position: { x: 90, y: 22 } },
+          { label: 'Monaco Editor (UI)', position: { x: 57, y: 50 } },
+          { label: 'AWS SDK v2', position: { x: 73, y: 72 } },
+          { label: 'S3 Buckets', position: { x: 90, y: 72 } },
         ],
         connections: [
           { from: 0, to: 1 },
           { from: 1, to: 2 },
           { from: 2, to: 3 },
-          { from: 1, to: 4 },
+          { from: 3, to: 4 },
           { from: 4, to: 5 },
+          { from: 2, to: 6 },
+          { from: 2, to: 7 },
+          { from: 7, to: 8 },
         ],
       },
       code: [
@@ -893,22 +933,31 @@ async function handleUserQuery(query: string, userId: string) {
 
     architecture: {
       diagram: {
-        description: '4-Layer Pipeline: Capture → Compress → Bridge → Memory',
+        description: '4-Layer Middleware: Gate → Crop → Route → Memory',
         components: [
-          { label: 'Smart Glasses / Camera', position: { x: 5, y: 50 } },
-          { label: 'L1: IMU Gate + Blur + SSIM', position: { x: 28, y: 50 } },
-          { label: 'L2: ROI Crop + Adaptive Encode', position: { x: 52, y: 50 } },
-          { label: 'L3: VLM Router + Circuit Breaker', position: { x: 75, y: 25 } },
-          { label: 'VLM API (Claude / GPT / Gemini)', position: { x: 93, y: 25 } },
-          { label: 'L4: Sliding Window Memory', position: { x: 75, y: 75 } },
+          { label: 'Smart Glasses Camera', position: { x: 5, y: 50 } },
+          { label: 'L1 IMU Gate', position: { x: 20, y: 28 } },
+          { label: 'L1 Blur Detector', position: { x: 20, y: 50 } },
+          { label: 'L1 SSIM Filter', position: { x: 20, y: 72 } },
+          { label: 'L2 Scene Classifier', position: { x: 42, y: 35 } },
+          { label: 'L2 ROI Crop + Encode', position: { x: 42, y: 65 } },
+          { label: 'L3 VLM Router', position: { x: 62, y: 35 } },
+          { label: 'L4 Context Memory', position: { x: 62, y: 72 } },
+          { label: 'Claude / GPT / Gemini', position: { x: 82, y: 35 } },
+          { label: 'Circuit Breaker', position: { x: 82, y: 65 } },
         ],
         connections: [
           { from: 0, to: 1 },
-          { from: 1, to: 2 },
-          { from: 2, to: 3 },
-          { from: 3, to: 4 },
-          { from: 2, to: 5 },
-          { from: 5, to: 3 },
+          { from: 0, to: 2 },
+          { from: 0, to: 3 },
+          { from: 1, to: 4 },
+          { from: 2, to: 4 },
+          { from: 3, to: 5 },
+          { from: 4, to: 6 },
+          { from: 5, to: 6 },
+          { from: 6, to: 8 },
+          { from: 6, to: 9 },
+          { from: 7, to: 6 },
         ],
       },
       code: [
@@ -1038,23 +1087,29 @@ async function handleUserQuery(query: string, userId: string) {
 
     architecture: {
       diagram: {
-        description: 'Chrome Extension → FastAPI → Redis Queue → Worker → Archive',
+        description: 'Monorepo: Chrome Ext + Web → FastAPI → Redis → Worker → S3 + PostgreSQL',
         components: [
-          { label: 'User (Web App / Extension)', position: { x: 5, y: 50 } },
-          { label: 'Chrome Extension (MV3)', position: { x: 25, y: 25 } },
-          { label: 'FastAPI Backend', position: { x: 50, y: 50 } },
-          { label: 'Redis Job Queue', position: { x: 70, y: 25 } },
-          { label: 'Try-On Worker', position: { x: 88, y: 50 } },
-          { label: 'PostgreSQL + Archive', position: { x: 70, y: 75 } },
+          { label: 'User', position: { x: 5, y: 50 } },
+          { label: 'Chrome Extension (MV3)', position: { x: 20, y: 25 } },
+          { label: 'React Web App', position: { x: 20, y: 75 } },
+          { label: 'FastAPI Backend', position: { x: 40, y: 50 } },
+          { label: 'JWT Auth', position: { x: 55, y: 25 } },
+          { label: 'PostgreSQL (profiles)', position: { x: 55, y: 75 } },
+          { label: 'Redis Job Queue', position: { x: 70, y: 35 } },
+          { label: 'Try-On Worker', position: { x: 85, y: 50 } },
+          { label: 'S3 Image Archive', position: { x: 85, y: 80 } },
         ],
         connections: [
           { from: 0, to: 1 },
-          { from: 1, to: 2 },
           { from: 0, to: 2 },
+          { from: 1, to: 3 },
           { from: 2, to: 3 },
           { from: 3, to: 4 },
-          { from: 4, to: 5 },
-          { from: 2, to: 5 },
+          { from: 3, to: 5 },
+          { from: 3, to: 6 },
+          { from: 6, to: 7 },
+          { from: 7, to: 8 },
+          { from: 7, to: 5 },
         ],
       },
       code: [
