@@ -336,6 +336,7 @@ export default function Navbar() {
                               href={item.href}
                               target={item.href.startsWith('mailto') ? undefined : "_blank"}
                               rel={item.href.startsWith('mailto') ? undefined : "noopener noreferrer"}
+                              onClick={() => setHoveredItem(null)}
                               className="block py-1.5 text-lg md:text-xl font-semibold text-textPrimary leading-tight"
                             >
                               {item.label}
@@ -343,6 +344,7 @@ export default function Navbar() {
                           ) : (
                             <Link
                               href={item.href || "#"}
+                              onClick={() => setHoveredItem(null)}
                               className="block py-1.5 text-lg md:text-xl font-semibold text-textPrimary leading-tight"
                             >
                               {item.label}
