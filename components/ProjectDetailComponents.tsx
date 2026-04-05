@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 
@@ -21,7 +21,7 @@ export function CodeBlock({ language, snippet }: CodeBlockProps) {
         </div>
         <span className="ml-2 text-xs text-gray-400 font-medium">{language}</span>
       </div>
-      
+
       {/* Code content */}
       <div className="p-4 overflow-x-auto">
         <pre className="text-sm leading-relaxed font-mono">
@@ -39,7 +39,6 @@ interface DiagramPlaceholderProps {
 }
 
 export function DiagramPlaceholder({ description, components, connections }: DiagramPlaceholderProps) {
-  // Calculate dynamic box sizes based on text length
   const getBoxDimensions = (label: string) => {
     const words = label.split(' ');
     const maxLineLength = Math.max(...words.map(w => w.length));
@@ -52,19 +51,17 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
   return (
     <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-lg p-8 min-h-[500px] overflow-hidden">
       <p className="text-xs text-gray-400 mb-6 uppercase tracking-wider">{description}</p>
-      
-      {/* SVG for diagram */}
-      <svg 
-        viewBox="0 0 100 100" 
+
+      <svg
+        viewBox="0 0 100 100"
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Connections - render behind boxes */}
         {connections.map((conn, idx) => {
           const from = components[conn.from];
           const to = components[conn.to];
           if (!from || !to) return null;
-          
+
           return (
             <line
               key={idx}
@@ -79,17 +76,15 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
             />
           );
         })}
-        
-        {/* Components - render on top */}
+
         {components.map((comp, idx) => {
           const { width, height } = getBoxDimensions(comp.label);
           const words = comp.label.split(' ');
           const boxX = comp.position.x - width / 2;
           const boxY = comp.position.y - height / 2;
-          
+
           return (
             <g key={idx}>
-              {/* Box background */}
               <rect
                 x={boxX}
                 y={boxY}
@@ -101,7 +96,6 @@ export function DiagramPlaceholder({ description, components, connections }: Dia
                 rx="1.5"
                 opacity={0.9}
               />
-              {/* Text - handle multi-line */}
               {words.map((word, wordIdx) => (
                 <text
                   key={wordIdx}
@@ -129,7 +123,6 @@ interface TechStackIconsProps {
 }
 
 export function TechStackIcons({ techStack }: TechStackIconsProps) {
-  // Simple badge representation for tech stack
   return (
     <div className="flex flex-wrap gap-2">
       {techStack.map((tech) => (
@@ -184,26 +177,32 @@ export function ProjectLinks({ links }: ProjectLinksProps) {
   );
 }
 
+// B: Section — scroll-triggered reveal
 interface SectionProps {
+  id?: string;
   title: string;
   children: React.ReactNode;
 }
 
-export function Section({ title, children }: SectionProps) {
+const appleEase = [0.25, 0.46, 0.45, 0.94] as const;
+
+export function Section({ id, title, children }: SectionProps) {
   return (
-    <section className="mb-16">
+    <section id={id} className="mb-16">
       <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 0.7, ease: appleEase }}
         className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight"
       >
         {title}
       </motion.h2>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 0.7, delay: 0.1, ease: appleEase }}
       >
         {children}
       </motion.div>
@@ -211,18 +210,143 @@ export function Section({ title, children }: SectionProps) {
   );
 }
 
-// Inline code styling (matches code-block theme)
+// B: StaggeredList — scroll-triggered staggered bullet items
+const listVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: appleEase },
+  },
+};
+
+interface StaggeredListProps {
+  items: string[];
+  dotColor: string;
+}
+
+export function StaggeredList({ items, dotColor }: StaggeredListProps) {
+  return (
+    <motion.ul
+      className="space-y-3"
+      variants={listVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+    >
+      {items.map((item, i) => (
+        <motion.li
+          key={i}
+          variants={itemVariants}
+          className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed"
+        >
+          <span
+            className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-2.5"
+            style={{ backgroundColor: dotColor }}
+            aria-hidden
+          />
+          <span>{renderMarkdownBold(item)}</span>
+        </motion.li>
+      ))}
+    </motion.ul>
+  );
+}
+
+// C: TableOfContents — sticky sidebar with active section tracking
+interface TocSection {
+  id: string;
+  label: string;
+}
+
+interface TableOfContentsProps {
+  sections: TocSection[];
+}
+
+export function TableOfContents({ sections }: TableOfContentsProps) {
+  const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-40% 0px -55% 0px",
+        threshold: 0,
+      }
+    );
+
+    sections.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sections]);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <nav
+      className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col gap-5 items-end"
+      aria-label="Page sections"
+    >
+      {sections.map(({ id, label }) => {
+        const isActive = activeId === id;
+        return (
+          <button
+            key={id}
+            onClick={() => scrollTo(id)}
+            className="group flex items-center gap-3 cursor-pointer"
+            aria-label={`Go to ${label}`}
+          >
+            {/* Label — visible on hover */}
+            <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors duration-200 opacity-0 group-hover:opacity-100 whitespace-nowrap select-none">
+              {label}
+            </span>
+            {/* Dot */}
+            <motion.span
+              className="block rounded-full flex-shrink-0"
+              animate={{
+                width: isActive ? 8 : 5,
+                height: isActive ? 8 : 5,
+                backgroundColor: isActive ? "#0A84FF" : "#4B5563",
+              }}
+              transition={{ duration: 0.25, ease: appleEase }}
+            />
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+// Inline code styling
 const inlineCodeClass =
   "font-mono text-sm text-gray-300 bg-[#1E1E1E] border border-[#2D2D30] rounded px-1.5 py-0.5";
 
-// Utility function to convert markdown bold (**text**) and inline code (`text`) to styled HTML
 export function renderMarkdownBold(text: string): React.ReactNode {
   const lines = text.split("\n");
 
   return (
     <>
       {lines.map((line, lineIndex) => {
-        // Split by bold (**...**) or inline code (`...`), keep delimiters
         const parts = line.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
 
         return (
@@ -253,4 +377,3 @@ export function renderMarkdownBold(text: string): React.ReactNode {
     </>
   );
 }
-
