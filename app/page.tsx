@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import PhotoCylinder from "@/components/PhotoCylinder";
-import ScrollExpansionHero from "@/components/ui/scroll-expansion-hero";
+import GlassIntro from "@/components/GlassIntro/GlassIntro";
 import HeroTagline from "@/components/HeroTagline";
 import { highlightImages } from "@/constants/data";
 import { useState } from "react";
@@ -14,15 +14,12 @@ export default function Home() {
   const [showAllAwards, setShowAllAwards] = useState(false);
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-background">
-      <ScrollExpansionHero
-        mediaType="image"
-        mediaSrc="/smartsight-intro.gif"
-        bgImageSrc="/smartsight-lineup.webp"
-      />
+    <main className="relative min-h-screen overflow-x-clip bg-background">
+      <GlassIntro />
 
       {/* Hero Section (includes Highlights + links) */}
-      <section id="about" className="scroll-mt-20 pt-20">
+      {/* -mt-[100vh]: sits under the intro's last screen so it appears as the stage fades */}
+      <section id="about" className="relative -mt-[100vh] scroll-mt-20 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-2 md:pb-4">
           <div className="mb-8 md:mb-12 relative">
             <div className="relative flex flex-col md:flex-row items-start justify-between gap-8 mb-10">
