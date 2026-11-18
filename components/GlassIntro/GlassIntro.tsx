@@ -318,11 +318,11 @@ export default function GlassIntro() {
 
     /* ---------- input ---------- */
     // scroll → timeline: BASE screens at an even pace, plus extra screens parked where there is something to read
-    // (keep h-[…vh] on the section = (BASE + extras + 1) * 100 → 3300vh)
+    // (keep h-[…vh] on the section = (BASE + extras + 1) * 100 → 3500vh)
     const BASE = 11.4;
     // about one screen of scroll per beat in the point-of-view scenes, so a normal trackpad pace doesn't rush past them:
     // see ≈2.5 screens · understand ≈3.5 · predict ≈4 · throw ≈3.9 · score ≈3.3 · fold ≈2 · speak ≈2
-    const STRETCH: [number, number, number][] = [[0.19, 0.255, 2], [0.57, 0.65, 1.6], [0.65, 0.73, 2.6], [0.73, 0.81, 3.1], [0.81, 0.845, 3.5], [0.845, FOLD_T, 2.9], [FOLD_T, SPEAK_T, 1.4], [SPEAK_T, CLOSE_T, 1.4], [CLOSE_T, CLOSE_END, 2.6]];
+    const STRETCH: [number, number, number][] = [[0.19, 0.255, 2], [0.57, 0.65, 1.6], [0.65, 0.73, 2.6], [0.73, 0.81, 3.1], [0.81, 0.845, 3.5], [0.845, FOLD_T, 2.9], [FOLD_T, SPEAK_T, 1.4], [SPEAK_T, CLOSE_T, 1.4], [CLOSE_T, CLOSE_END, 2.6], [CLOSE_END, 1, 1.5]]; // last: the hand-off to About
     const knots: [number, number][] = [[0, 0]]; // [t, screens]
     for (const [t0, t1, extra] of STRETCH) {
       const [pt, ps] = knots[knots.length - 1];
@@ -346,12 +346,16 @@ export default function GlassIntro() {
     const YAW0 = 0.6, WEAR0 = 0.4, SPIN0 = screensAt(0.06), SPIN1 = screensAt(0.38);
     const baseYaw = (t: number) => YAW0 + (Math.PI * 2 * (screensAt(Math.min(Math.max(t, 0.06), 0.38)) - SPIN0)) / (SPIN1 - SPIN0);
     let breath = 1, dragged = false, dragHintA = 0;
+    let outK = 0;
     let pTarget = 0, pCur = 0, mx = 0, my = 0, smy = 0, w = 1, h = 1, visible = true;
     let nudge = 0, tilt = 0, drag = false, moved = false, picking = false, downX = 0, downY = 0, smx = 0, lastT = 0, px = 0, py = 0;
     const readScroll = () => {
       const r = section.getBoundingClientRect();
       pTarget = remap(clamp01(-r.top / (r.height - window.innerHeight)));
       visible = r.bottom > 0 && r.top < window.innerHeight;
+      // last screen of the section: About (tucked underneath) rises while the stage dissolves; tied to scroll, so it reverses
+      // over the last 2.5 screens: the intro dissolves while pinned (nothing moves), then About rises in as it fades up
+      outK = clamp01((3.5 * window.innerHeight - r.bottom) / (2.5 * window.innerHeight));
     };
     const ndc = new THREE.Vector2(), ray = new THREE.Raycaster(); let hovered: string | null = null;
     let focus: string | null = null, fKey: string | null = null, fAmt = 0;
@@ -395,6 +399,7 @@ export default function GlassIntro() {
     canvas.addEventListener("pointercancel", onUp);
     window.addEventListener("resize", resize);
     window.addEventListener("keydown", onKey);
+    document.documentElement.style.setProperty("--about-pull", "-100vh");
     readScroll(); resize();
 
 
@@ -787,6 +792,12 @@ export default function GlassIntro() {
 
         const darkScene = returning ? bgK < 0.5 : pov > 0.5;
         stageRef.current.dataset.dark = String(darkScene);
+        // dissolve in two halves so the two never overlap: the intro leaves first, then About arrives (--about-in)
+        const fade = 1 - soft(seg(outK, 0, 0.55));
+        document.documentElement.style.setProperty("--about-in", String(soft(seg(outK, 0.6, 1))));
+        stageRef.current.style.opacity = String(fade);
+        stageRef.current.style.visibility = fade < 0.01 ? "hidden" : "visible";
+        stageRef.current.style.pointerEvents = fade < 0.5 ? "none" : "";
         const bv = returning ? Math.round(lerp(0, 245, bgK)) : darkScene ? 0 : 245;
         stageRef.current.style.backgroundColor = returning ? `rgb(${bv},${bv},${Math.round(lerp(0, 247, bgK))})` : darkScene ? DARK_BG : LIGHT_BG;
         if (stepsRef.current) stepsRef.current.style.opacity = darkScene || p >= 0.57 ? "0" : "1";
@@ -914,6 +925,8 @@ export default function GlassIntro() {
 
     return () => {
       disposed = true;
+      document.documentElement.style.removeProperty("--about-in");
+      document.documentElement.style.removeProperty("--about-pull");
       cancelAnimationFrame(raf);
       normalTex.dispose();
       window.removeEventListener("scroll", readScroll);
@@ -937,7 +950,7 @@ export default function GlassIntro() {
   if (status === "error") return null;
 
   return (
-    <section ref={sectionRef} aria-label={UI.section} className="relative z-10 h-[3300vh]">
+    <section ref={sectionRef} aria-label={UI.section} className="relative z-10 h-[3500vh]">
       {/* the whole stage fades out at the end, revealing the About section tucked underneath */}
       <div ref={stageRef} data-dark="false" style={{ backgroundColor: LIGHT_BG }} className="group/stage sticky top-0 h-screen overflow-hidden text-[#1d1d1f]">
         {/* what the wearer sees: scrubbed footage + detections, under the 3D glasses so it shows through the lenses */}
@@ -1006,7 +1019,7 @@ export default function GlassIntro() {
             key={c.word || c.num || "hero"}
             ref={(el) => { captionRefs.current[i] = el; }}
             data-on={i === 0}
-            className={`group/cap pointer-events-none absolute bottom-[9vh] left-5 right-5 z-[4] md:left-[max(2rem,calc((100vw-80rem)/2+2rem))] ${i === 0 ? "max-w-[860px]" : "max-w-[620px]"}`}
+            className={`group/cap pointer-events-none absolute bottom-[9vh] left-5 right-5 z-[4] md:left-7 ${i === 0 ? "max-w-[860px]" : "max-w-[620px]"}`}
           >
             {c.num && i === 0 && <Mask step={0}><p className="mb-2 text-[clamp(17px,1.5vw,21px)] font-semibold tracking-[-0.015em] text-[#1d1d1f]">{c.num}</p></Mask>}
             {c.num && i !== 0 && <Mask step={0}><p data-eyebrow className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[#0066cc] group-data-[dark=true]/stage:text-[#2997ff]">{c.num}</p></Mask>}

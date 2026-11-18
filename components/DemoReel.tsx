@@ -67,7 +67,7 @@ export default function DemoReel() {
   };
   const btn = "grid h-9 w-9 place-items-center rounded-full bg-[#d2d2d7]/65 text-textPrimary/80 transition-colors hover:bg-[#d2d2d7] dark:bg-white/15 dark:hover:bg-white/25";
   return (
-    <div className="pb-16 pt-10 md:pb-24 md:pt-14">
+    <div className="pb-12 pt-16 md:pb-16 md:pt-24">
       {/* title and arrows share one row, like apple.com shelves */}
       <div className="mx-auto flex max-w-7xl items-end justify-between gap-6 px-4 sm:px-6 lg:px-8">
         <h3 className="text-[28px] font-semibold tracking-[-0.02em] text-textPrimary md:text-[40px]">Watch the demos.</h3>

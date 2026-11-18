@@ -5,13 +5,24 @@ import Image from "next/image";
 import PhotoCylinder from "@/components/PhotoCylinder";
 import DemoReel from "@/components/DemoReel";
 import GlassIntro from "@/components/GlassIntro/GlassIntro";
+import ScrollExpandMedia from "@/components/ui/scroll-expansion-hero";
 import BackToTop from "@/components/BackToTop";
 import { highlightImages } from "@/constants/data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [showAllNews, setShowAllNews] = useState(false);
   const [showAllExperience, setShowAllExperience] = useState(false);
+  // Phones get the light gif + typing intro; the 3D GlassIntro (49 MB model, WebGL) only mounts on md+.
+  // null until mounted, so neither intro renders on the server and the wrong one never flashes.
+  const [mobile, setMobile] = useState<boolean | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
   // Collapsing removes rows above the button, which would leave the reader far down the page:
   // bring the section's heading back into view when it shrinks.
   const toggle = (open: boolean, set: (v: boolean) => void, id: string) => {
@@ -21,11 +32,18 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen overflow-x-clip bg-background">
-      <GlassIntro />
+      {mobile === null ? (
+        <div className="h-[100dvh]" />
+      ) : mobile ? (
+        <ScrollExpandMedia mediaType="image" mediaSrc="/smartsight-intro.gif" bgImageSrc="/smartsight-intro.gif" />
+      ) : (
+        <GlassIntro />
+      )}
       <BackToTop />
 
       {/* Hero Section (includes Highlights + links) */}
-      <section id="about" className="relative scroll-mt-20 pt-20">
+      {/* the intro pulls About up under its last screen (--about-pull) and fades it in (--about-in); without the intro both stay neutral */}
+      <section id="about" style={{ opacity: "var(--about-in, 1)", marginTop: "var(--about-pull, 0px)" }} className="relative scroll-mt-20 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-2 md:pb-4">
           <div className="mb-8 md:mb-12 relative">
             <div className="relative flex flex-col md:flex-row items-start justify-between gap-8 mb-10">
@@ -291,13 +309,17 @@ export default function Home() {
         </div>
       </section>
 
-      <div id="photo-dumps" className="scroll-mt-20 bg-surface pt-16 md:pt-24">
+      {/* the work first (demo films), then the people and places behind it (photos) */}
+      <div id="demos" className="scroll-mt-20 bg-surface">
+        <DemoReel />
+      </div>
+
+      <div id="photo-dumps" className="scroll-mt-20 bg-surface pt-4 md:pt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-medium uppercase tracking-[0.16em] text-textSecondary">Beyond the build</p>
           <h2 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight text-textPrimary">Photo Dumps.</h2>
         </div>
         <PhotoCylinder images={highlightImages} />
-        <DemoReel />
       </div>
 
       {/* footer continues the white of the section above, so there is no seam */}
