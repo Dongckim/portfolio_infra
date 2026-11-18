@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import PhotoCylinder from "@/components/PhotoCylinder";
 import GlassIntro from "@/components/GlassIntro/GlassIntro";
+import BackToTop from "@/components/BackToTop";
 import HeroTagline from "@/components/HeroTagline";
 import { highlightImages } from "@/constants/data";
 import { useState } from "react";
@@ -16,10 +17,10 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-x-clip bg-background">
       <GlassIntro />
+      <BackToTop />
 
       {/* Hero Section (includes Highlights + links) */}
-      {/* -mt-[100vh]: sits under the intro's last screen so it appears as the stage fades */}
-      <section id="about" className="relative -mt-[100vh] scroll-mt-20 pt-20">
+      <section id="about" className="relative scroll-mt-20 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-2 md:pb-4">
           <div className="mb-8 md:mb-12 relative">
             <div className="relative flex flex-col md:flex-row items-start justify-between gap-8 mb-10">
@@ -173,19 +174,35 @@ export default function Home() {
             <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Recent News</h2>
             <div className="mt-8 space-y-6 md:space-y-7">
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
-                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.08</p>
-                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Starting my M.S. in Systems &amp; Entrepreneurial Engineering at UIUC.</p>
+                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.11</p>
+                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Poster accepted at HFES 2027: &ldquo;Smart Glasses for Real-Time Task Support: A Systematic Mapping Review Across Professional Settings.&rdquo;</p>
               </article>
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
-                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.06</p>
-                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Joined HXRI Labs as a Research Assistant under the guidance of Avinash Gupta.</p>
+                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.11</p>
+                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Submitted Glassistant to the Meta Global AI Developer Hackathon.</p>
               </article>
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
-                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.06</p>
-                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Exhibited SmartSight at the Builder&apos;s Nexus during AWE USA 2026 in Long Beach, California.</p>
+                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.10</p>
+                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Advanced past the first round of the Meta Global AI Developer Hackathon.</p>
+              </article>
+              <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.09</p>
+                <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Joined the Tech team of the CreatVR research group, an IRB-approved joint study with Cornell University.</p>
               </article>
               {showAllNews && (
                 <>
+                  <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                    <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.08</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Starting my M.S. in Systems &amp; Entrepreneurial Engineering at UIUC.</p>
+                  </article>
+                  <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                    <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.06</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Joined HXRI Labs as a Research Assistant under the guidance of Avinash Gupta.</p>
+                  </article>
+                  <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                    <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.06</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Exhibited SmartSight at the Builder&apos;s Nexus during AWE USA 2026 in Long Beach, California.</p>
+                  </article>
                   <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                     <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.05</p>
                     <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Graduated from Stony Brook University Magna Cum Laude.</p>
@@ -202,7 +219,7 @@ export default function Home() {
                   </article>
                   <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                     <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.01</p>
-                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">SmartSight won Gold and Meta Track at MIT Reality Hack.</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">SmartSight won both the Gold Prize and Meta&apos;s Best Use of the Wearables Device Access Toolkit award at MIT Reality Hack.</p>
                   </article>
                 </>
               )}
@@ -263,7 +280,7 @@ export default function Home() {
             <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Awards &amp; Honors</h2>
             <div className="mt-8 space-y-8 md:space-y-10">
               {[
-                ["2026.01", "Gold Prize & Meta Track Winner · MIT Reality Hack", "Co-won the overall Grand Prize and placed first in the Meta Track for SmartSight, a hands-free AI learning agent."],
+                ["2026.01", "Gold Prize + Meta Award · MIT Reality Hack", "SmartSight won both the overall Gold Prize and Meta's Best Use of the Meta Wearables Device Access Toolkit Showcasing a Hands-free Everyday Use Case."],
                 ["2025 — 2026", "SUNY Korea Institutional Scholarship", "Merit-based scholarship recipient, including $2,000 in Spring 2025 and $1,000 in Spring 2026."],
                 ["2024.08", "Encouragement Award · SeSAC Google Hackathon", "Awarded by the Seoul Business Agency for developing an innovative software solution."],
                 ["2023.11", "Grand Prize · Incheon Global Campus Startup Idea Contest", "Awarded first place for pitching an entrepreneurial business model."],

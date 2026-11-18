@@ -5,8 +5,8 @@ export const FEED = {
   dir: "/intro/feed",
   ext: "jpg",
   count: 102,
-  width: 854,
-  height: 480,
+  width: 1920,
+  height: 1080,
 };
 
 /* ---------- copy ---------- */
@@ -26,7 +26,8 @@ export const UI = {
   section: "Smart glasses: what is inside, and what they see",
   skip: "Skip intro",
   drag: "Drag to rotate",
-  scrollHint: "Scroll to explore  ·  Drag to rotate",
+  scrollHint: "Scroll to explore",
+  dragHint: "or drag the glasses to rotate",
   loading: "Loading model",
   loadingLabel: "Loading 3D model",
 };
@@ -36,21 +37,33 @@ export const SPOKEN = "Deep shot coming. Likely completion.";
 export const BOARD_LABEL = "Cover 2";
 
 // one caption per scene. Scenes 03–06 lead with a one-word title; `spoken` reveals the line word by word.
-export const CAPTIONS: { num?: string; word?: string; title: string; body?: string; spoken?: boolean }[] = [
-  { title: "Dongchan\nKim", body: "Designing the things you see the world through." },
-  { num: "01 / Analyze", title: "Take it apart first.", body: "To understand a product, start with what's inside. Select a part." },
+export const CAPTIONS: { num?: string; word?: string; title: string; lead?: string; body?: string; spoken?: boolean }[] = [
+  { num: "Smart glasses & end-to-end AI production engineer", title: "Dongchan\nKim", lead: "I build AI glasses, and the AI behind them." },
+  { num: "01 / Analyze", title: "Take it apart first.", body: "Every part, and what it taught me. Select one." },
   { num: "02 / Wear", title: "Then put it on.", body: "And see what it sees." },
-  { word: "See.", title: "It sees every player.", body: "22 players. 30 ms. On device." },
-  { word: "Understand.", title: "The video stays on the glasses.", body: "Only the play moves on." },
-  { word: "Predict.", title: "Safeties split. The post is open.", body: "Policy: post 71% · out 18% · check-down 11%." },
-  { word: "Throw.", title: "Then the play proves it." },
-  { word: "Score.", title: "Caught on the post." },
+  { word: "See.", title: "It sees what you see.", body: "Every player in view. Detected in 9 ms. On device." },
+  { word: "Understand.", title: "Pixels become structure.", body: "A scene graph, built on device. The model gets the graph, never the video." },
+  { word: "Predict.", title: "Then it looks ahead.", body: "A policy ranks the next play. 14 ms." },
+  { word: "Throw.", title: "Then the ball is in the air." },
+  { word: "Score.", title: "Called it.", body: "Post route, 71%. Touchdown." },
   { word: "Speak.", title: SPOKEN, spoken: true },
+  { word: "Augmented.", title: "A game today. Anything tomorrow.", body: "From the sensor on your face, to the model, back to your ear." },
+];
+
+// readout beside the scenes: each stage of the pipeline lights up as the intro reaches it ([stage, detail, first scene index])
+export const PIPELINE: [string, string, number][] = [
+  ["Capture", "1080p · 24 fps", 3], ["Detect", "22 objects · 9 ms", 3], ["Track", "stable IDs", 3],
+  ["Scene graph", "22 nodes · Cover 2", 4], ["Policy", "post 0.71 · 14 ms", 5], ["Voice", "on-ear, private", 8],
+];
+// the closing diagram: the whole system, glasses to model and back
+export const SYSTEM: [string, string, string?][] = [
+  ["Sensor", "Camera · IMU"], ["On-device vision", "Detect · track", "Vision"], ["Scene graph", "Structure, not pixels"],
+  ["AI model", "Policy · language"], ["Voice", "Back to your ear"],
 ];
 
 export const STEPS = ["Analyze", "Wear", "See", "Understand", "Predict", "Throw", "Score", "Speak"];
 // tag that lands on the ball once it is in the air
-export const THROW_TAG = "Post · as predicted";
+export const THROW_TAG = "As predicted";
 
 /* ---------- scene data ---------- */
 
@@ -114,7 +127,7 @@ export const BALL_TRACK: Track = [
 export const RELEASE_FRAME = 95;
 
 // Score: second clip, continuing from the throw's last frame — catch, run in, celebration with a push-in
-// (draft footage: its first second still shows a field logo — decided separately)
+// (1080p finals of both clips; boxes/keys are normalised so they carry over from the 480p drafts unchanged)
 export const FEED2 = { dir: "/intro/feed2", ext: "jpg", count: 145 };
 export const CATCH_FRAME = 50; // FEED2 frame of the catch
 export const TD_FRAME = 100;   // FEED2 frame where the receiver crosses the goal line
@@ -127,6 +140,9 @@ export const BALL_TRACK2: [number, number, number, number, number][] = [
   ball2(18, 0.47, 0.21), ball2(21, 0.51, 0.23), ball2(24, 0.55, 0.225), ball2(30, 0.59, 0.2), ball2(36, 0.6, 0.19), ball2(42, 0.585, 0.215),
   ball2(45, 0.575, 0.24), ball2(48, 0.565, 0.255), ball2(50, 0.555, 0.27),
 ];
+// keeps the field-centre team logo out of shot during the whip pan (frames 7–17 at desktop): extra zoom and a leftward
+// shift of the zoom centre, [frame, zoom ×, centre dx] — found offline against the logo's pixels, interpolated linearly
+export const LOGO_DODGE: [number, number, number][] = [[4, 1, 0], [7, 1.2, -0.12], [8, 1.25, -0.15], [9, 1.2, -0.13], [11, 1.1, -0.11], [13, 1, -0.1], [18, 1, 0]];
 export const RECEIVER_TRACK2: [number, number, number, number, number][] = [
   [42, 0.555, 0.26, 0.1, 0.32], [50, 0.54, 0.24, 0.1, 0.38], [62, 0.505, 0.22, 0.13, 0.5], [74, 0.41, 0.2, 0.22, 0.6], [86, 0.46, 0.2, 0.18, 0.62],
   [96, 0.39, 0.17, 0.21, 0.72], [104, 0.4, 0.13, 0.22, 0.78], [112, 0.38, 0.14, 0.26, 0.8],

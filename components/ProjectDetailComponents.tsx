@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Github } from "lucide-react";
 
 interface CodeBlockProps {
   language: string;
@@ -37,6 +36,8 @@ interface DiagramPlaceholderProps {
   components: Array<{ label: string; position: { x: number; y: number } }>;
   connections: Array<{ from: number; to: number; label?: string }>;
   groups?: Array<{ label: string; members: number[]; color?: string }>;
+  /** Labels on the critical path; other nodes are dimmed. */
+  highlight?: string[];
 }
 
 const NODE_COLORS = [
@@ -52,7 +53,8 @@ const NODE_COLORS = [
   '#9A8B5A', // muted gold
 ];
 
-export function DiagramPlaceholder({ description, components, connections, groups }: DiagramPlaceholderProps) {
+export function DiagramPlaceholder({ description, components, connections, groups, highlight }: DiagramPlaceholderProps) {
+  const dim = (label: string) => !!highlight?.length && !highlight.includes(label);
   // Group words into lines of max N characters instead of one word per line
   const wrapWords = (label: string, maxLen = 20): string[] => {
     const tokens = label.split(' ');
@@ -109,9 +111,9 @@ export function DiagramPlaceholder({ description, components, connections, group
   const viewBox = `${vbX} ${vbY} ${vbW} ${vbH}`;
 
   return (
-    <div className="relative bg-[#1C1C1E] border border-[#2D2D30] rounded-2xl p-6 md:p-8 h-[420px] md:h-[500px] flex flex-col">
+    <div className="relative bg-surface border border-border rounded-2xl p-6 md:p-8 h-[420px] md:h-auto flex flex-col">
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
-        <p className="text-xs text-gray-400 uppercase tracking-wider">{description}</p>
+        <p className="text-xs text-textSecondary uppercase tracking-wider">{description}</p>
         <span className="md:hidden flex items-center gap-1 text-[10px] text-gray-600">
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
@@ -128,7 +130,7 @@ export function DiagramPlaceholder({ description, components, connections, group
         <div className="h-full min-w-[580px] md:min-w-0">
       <svg
         viewBox={viewBox}
-        className="w-full h-full"
+        className="w-full h-full md:h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -230,7 +232,7 @@ export function DiagramPlaceholder({ description, components, connections, group
           const lineH = 4;
 
           return (
-            <g key={idx} transform={`translate(${cx}, ${cy})`}>
+            <g key={idx} transform={`translate(${cx}, ${cy})`} opacity={dim(comp.label) ? 0.4 : 1}>
               <motion.g
                 initial={{ opacity: 0, scale: 0.55 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -257,9 +259,9 @@ export function DiagramPlaceholder({ description, components, connections, group
                   y={-height / 2}
                   width={width}
                   height={height}
-                  fill="#1A1A1E"
+                  style={{ fill: "var(--surface)" }}
                   stroke={color}
-                  strokeWidth="0.45"
+                  strokeWidth={highlight?.includes(comp.label) ? 0.9 : 0.45}
                   strokeOpacity={0.75}
                   rx="2.2"
                 />
@@ -289,243 +291,11 @@ export function DiagramPlaceholder({ description, components, connections, group
   );
 }
 
-interface TechStackIconsProps {
-  techStack: string[];
-}
-
-export function TechStackIcons({ techStack }: TechStackIconsProps) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {techStack.map((tech) => (
-        <span
-          key={tech}
-          className="px-3 py-1.5 text-xs font-medium bg-[#1C1C1E] border border-[#2D2D30] text-gray-300 rounded-md"
-        >
-          {tech}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-interface ProjectLinksProps {
-  links: {
-    repo?: string;
-    demo?: string;
-  };
-}
-
-export function ProjectLinks({ links }: ProjectLinksProps) {
-  return (
-    <div className="flex items-center gap-4">
-      {links.repo && (
-        <motion.a
-          href={links.repo}
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-        >
-          <Github className="w-5 h-5" />
-          <span className="text-sm">Repository</span>
-        </motion.a>
-      )}
-      {links.demo && (
-        <motion.a
-          href={links.demo}
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-        >
-          <ExternalLink className="w-5 h-5" />
-          <span className="text-sm">Live Demo</span>
-        </motion.a>
-      )}
-    </div>
-  );
-}
-
-// B: Section — scroll-triggered reveal
-interface SectionProps {
-  id?: string;
-  title: string;
-  children: React.ReactNode;
-}
-
 const appleEase = [0.25, 0.46, 0.45, 0.94] as const;
-
-export function Section({ id, title, children }: SectionProps) {
-  return (
-    <section id={id} className="mb-16">
-      <motion.h2
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
-        transition={{ duration: 0.7, ease: appleEase }}
-        className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight"
-      >
-        {title}
-      </motion.h2>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
-        transition={{ duration: 0.7, delay: 0.1, ease: appleEase }}
-      >
-        {children}
-      </motion.div>
-    </section>
-  );
-}
-
-// B: StaggeredList — scroll-triggered staggered bullet items
-const listVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: appleEase },
-  },
-};
-
-interface StaggeredListProps {
-  items: string[];
-  dotColor: string;
-}
-
-export function StaggeredList({ items, dotColor }: StaggeredListProps) {
-  return (
-    <motion.ul
-      className="space-y-3"
-      variants={listVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-    >
-      {items.map((item, i) => (
-        <motion.li
-          key={i}
-          variants={itemVariants}
-          className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed"
-        >
-          <span
-            className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-2.5"
-            style={{ backgroundColor: dotColor }}
-            aria-hidden
-          />
-          <span>{renderMarkdownBold(item)}</span>
-        </motion.li>
-      ))}
-    </motion.ul>
-  );
-}
-
-// C: TableOfContents — sticky sidebar with active section tracking
-interface TocSection {
-  id: string;
-  label: string;
-}
-
-interface TableOfContentsProps {
-  sections: TocSection[];
-}
-
-export function TableOfContents({ sections }: TableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
-
-  useEffect(() => {
-    const lastId = sections[sections.length - 1]?.id;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: "-40% 0px -55% 0px",
-        threshold: 0,
-      }
-    );
-
-    // Activate last section when scrolled to bottom of page
-    const handleScroll = () => {
-      if (!lastId) return;
-      const distFromBottom = document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
-      if (distFromBottom < 80) {
-        setActiveId(lastId);
-      }
-    };
-
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [sections]);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  return (
-    <nav
-      className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col gap-5 items-end"
-      aria-label="Page sections"
-    >
-      {sections.map(({ id, label }) => {
-        const isActive = activeId === id;
-        return (
-          <button
-            key={id}
-            onClick={() => scrollTo(id)}
-            className="group flex items-center gap-3 cursor-pointer"
-            aria-label={`Go to ${label}`}
-          >
-            {/* Label — visible on hover */}
-            <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors duration-200 opacity-0 group-hover:opacity-100 whitespace-nowrap select-none">
-              {label}
-            </span>
-            {/* Dot */}
-            <motion.span
-              className="block rounded-full flex-shrink-0"
-              animate={{
-                width: isActive ? 8 : 5,
-                height: isActive ? 8 : 5,
-                backgroundColor: isActive ? "#0A84FF" : "#4B5563",
-              }}
-              transition={{ duration: 0.25, ease: appleEase }}
-            />
-          </button>
-        );
-      })}
-    </nav>
-  );
-}
 
 // Inline code styling
 const inlineCodeClass =
-  "font-mono text-sm text-gray-300 bg-[#1E1E1E] border border-[#2D2D30] rounded px-1.5 py-0.5";
+  "font-mono text-[0.9em] text-textPrimary bg-muted border border-border rounded px-1.5 py-0.5";
 
 export function renderMarkdownBold(text: string): React.ReactNode {
   const lines = text.split("\n");
@@ -541,7 +311,7 @@ export function renderMarkdownBold(text: string): React.ReactNode {
               if (part.startsWith("**") && part.endsWith("**")) {
                 const boldText = part.slice(2, -2);
                 return (
-                  <strong key={partIndex} className="font-semibold text-white">
+                  <strong key={partIndex} className="font-semibold text-textPrimary">
                     {boldText}
                   </strong>
                 );

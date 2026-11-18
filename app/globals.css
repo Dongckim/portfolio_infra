@@ -91,3 +91,11 @@ body {
     border: 1px solid var(--glass-border);
   }
 }
+
+/* scroll cue in the intro: the wheel dot drops and fades, then resets */
+@keyframes scrollcue {
+  0% { transform: translate(-50%, 0); opacity: 0; }
+  20% { opacity: 1; }
+  70% { transform: translate(-50%, 11px); opacity: 0; }
+  100% { transform: translate(-50%, 11px); opacity: 0; }
+}
