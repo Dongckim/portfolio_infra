@@ -77,8 +77,8 @@ export const projects: Project[] = [
   {
     id: "xr-optimization",
     title: "SM REALIVE",
-    description: "Achieved <50ms frame variance and ±10ms sync across multi-device XR environments.",
-    tags: ["Unity", "Profiling", "Latency-free"],
+    description: "A mixed-reality K-pop theatre: 8K stereo from one decode, ±1–2 frame sync across Quest 3 headsets, and a hand-held cheering stick.",
+    tags: ["Unity", "Multi-device sync", "8K stereo", "MR passthrough"],
     icon: Cpu,
     colSpan: 1,
   },

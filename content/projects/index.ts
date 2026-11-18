@@ -10,6 +10,10 @@ import { securesbu } from "./securesbu";
 import { ape } from "./ape";
 import { cortexSdk } from "./cortex-sdk";
 import { tryl } from "./tryl";
+import { ptsdVr } from "./ptsd-vr";
+import { foldingBirding } from "./folding-birding";
+import { unicare } from "./unicare";
+import { village } from "./village";
 
 export type { Project } from "./types";
 
@@ -25,6 +29,10 @@ export const projects: Project[] = [
   ape,
   cortexSdk,
   tryl,
+  ptsdVr,
+  foldingBirding,
+  unicare,
+  village,
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {

@@ -9,7 +9,7 @@ import type { Project } from "@/content/projects/types";
 
 const FEATURED = ["arc", "glassistant", "reality-hack"];
 // Wider than the navbar (1280) but capped, like apple.com tiles.
-const WRAP = "mx-auto max-w-[1440px] px-3 md:px-4";
+const WRAP = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"; // same gutter as the homepage and navbar
 
 /** Apple's orange "New" eyebrow, reused for awards. */
 const KICKER = "text-[15px] font-semibold text-[#B64400] dark:text-[#FF9F0A]";

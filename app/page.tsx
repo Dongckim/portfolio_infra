@@ -3,16 +3,21 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import PhotoCylinder from "@/components/PhotoCylinder";
+import DemoReel from "@/components/DemoReel";
 import GlassIntro from "@/components/GlassIntro/GlassIntro";
 import BackToTop from "@/components/BackToTop";
-import HeroTagline from "@/components/HeroTagline";
 import { highlightImages } from "@/constants/data";
 import { useState } from "react";
 
 export default function Home() {
   const [showAllNews, setShowAllNews] = useState(false);
-  const [showAllLeadership, setShowAllLeadership] = useState(false);
-  const [showAllAwards, setShowAllAwards] = useState(false);
+  const [showAllExperience, setShowAllExperience] = useState(false);
+  // Collapsing removes rows above the button, which would leave the reader far down the page:
+  // bring the section's heading back into view when it shrinks.
+  const toggle = (open: boolean, set: (v: boolean) => void, id: string) => {
+    set(!open);
+    if (open) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "instant" as ScrollBehavior, block: "start" }));
+  };
 
   return (
     <main className="relative min-h-screen overflow-x-clip bg-background">
@@ -73,9 +78,9 @@ export default function Home() {
                   }}
                   className="mb-6"
                 >
-                  <HeroTagline />
+                  <h2 className="mb-6 text-2xl md:text-3xl font-semibold tracking-tight text-textPrimary">I build AI glasses, end to end.</h2>
                   <p className="text-base md:text-lg text-textSecondary leading-relaxed">
-                    I&apos;m Dongchan Kim, an M.S. student at UIUC and a software engineer interested in making emerging interfaces feel reliable, useful, and human.
+                    M.S. student at UIUC. I build real-time XR systems and wearable AI, from the sensor to the model and back to your ear.
                   </p>
                   <p className="mt-4 text-base md:text-lg text-textSecondary leading-relaxed">
                     I&apos;ve built real-time XR systems, wearable AI prototypes, and full-stack products. I care about the engineering underneath an experience: latency, reliability, and the details that make interaction feel effortless.
@@ -119,7 +124,7 @@ export default function Home() {
                       whileTap={{ scale: 0.95 }}
                       className="flex items-center gap-2 text-textSecondary transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="#0077B5" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                       <span className="text-sm">LinkedIn</span>
@@ -171,7 +176,7 @@ export default function Home() {
       <section id="experience" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="space-y-20 md:space-y-28">
           <div id="recent-news" className="scroll-mt-24">
-            <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Recent News</h2>
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-textPrimary">Recent News</h2>
             <div className="mt-8 space-y-6 md:space-y-7">
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                 <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.11</p>
@@ -224,94 +229,80 @@ export default function Home() {
                 </>
               )}
             </div>
-            <div className="mt-8 flex justify-center md:ml-[11.5rem]">
-              <button onClick={() => setShowAllNews((value) => !value)} className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-textSecondary transition-colors hover:border-textSecondary hover:text-textPrimary">{showAllNews ? "Show less" : "Show more"}</button>
+            <div className="mt-8 ml-[6.5rem] pl-6 md:ml-[11.5rem]">
+              <button onClick={() => toggle(showAllNews, setShowAllNews, "recent-news")} className="text-[17px] font-medium text-accent transition-opacity hover:opacity-70">{showAllNews ? "Show less" : "Show all ›"}</button>
             </div>
           </div>
 
           <div id="education" className="scroll-mt-24">
-            <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Education</h2>
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-textPrimary">Education</h2>
             <div className="mt-8 space-y-8 md:space-y-10">
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                 <p className="pt-0.5 whitespace-nowrap text-sm font-semibold text-textSecondary">2026.08 — 2028.05</p>
                 <div className="border-l border-border pl-6">
-                  <h3 className="text-lg font-medium text-textSecondary">M.S. in Systems &amp; Entrepreneurial Engineering</h3>
-                  <p className="mt-1 text-base md:text-lg leading-relaxed text-textPrimary">University of Illinois Urbana-Champaign</p>
+                  <h3 className="text-lg font-semibold text-textPrimary">M.S. in Systems &amp; Entrepreneurial Engineering</h3>
+                  <p className="mt-1 text-base md:text-lg leading-relaxed text-textSecondary">University of Illinois Urbana-Champaign</p>
                   <p className="mt-2 text-base leading-relaxed text-textSecondary">Research Assistant, HXRI Labs · Advisor: Avinash Gupta</p>
                 </div>
               </article>
               <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                 <p className="pt-0.5 whitespace-nowrap text-sm font-semibold text-textSecondary">2022.08 — 2026.05</p>
                 <div className="border-l border-border pl-6">
-                  <h3 className="text-lg font-medium text-textSecondary">B.S. in Technology Systems Management</h3>
-                  <p className="mt-1 text-base md:text-lg leading-relaxed text-textPrimary">Stony Brook University</p>
+                  <h3 className="text-lg font-semibold text-textPrimary">B.S. in Technology Systems Management</h3>
+                  <p className="mt-1 text-base md:text-lg leading-relaxed text-textSecondary">Stony Brook University</p>
                   <p className="mt-2 text-base leading-relaxed text-textSecondary">Computer Science concentration · Magna Cum Laude</p>
                 </div>
               </article>
             </div>
           </div>
 
-          <div id="leadership" className="scroll-mt-24">
-            <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Leadership &amp; Experience</h2>
+          <div id="experience-awards" className="scroll-mt-24">
+            <span id="leadership" className="block" aria-hidden />
+            <span id="awards" className="block" aria-hidden />
+            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-textPrimary">Experience &amp; Awards</h2>
             <div className="mt-8 space-y-8 md:space-y-10">
               {[
+                ["2026.05", "Magna Cum Laude · Stony Brook University", "Graduated with high honors, with a cumulative GPA of 3.77 / 4.0."],
+                ["2026.01", "Gold Prize + Meta Award · MIT Reality Hack", "SmartSight took the Gold Prize and Meta's Best Use award."],
                 ["2026", "Host & Speaker · LAMBDA at SUNY Korea Alumni Talk", "Organized an alumni event mentoring Korean international students on early-career development and the U.S. tech ecosystem."],
-                ["2025", "Researcher · SBU Blockchain Business Lab", "Participated in a university lab developing blockchain-based applications."],
-                ["2024", "Senior AR Developer & Mentor · SNU XR Association × XREAL", "Led persistent mixed-reality experience development and mentored peers in spatial computing."],
-                ["2024", "University Student Mentor · SW Companion Hackathon", "Guided and supported participants at an event hosted by the Korea Foundation for the Advancement of Science and Creativity."],
-                ["2023", "Conference Staff · KWDC23", "Supported operations and logistics for the AsyncSwift developer conference."],
-                ["2023", "Student Reporter & Video Editor · Ministry of Foreign Affairs", "Created interactive cultural content, including interviews with national Taekwondo athletes."],
-              ].slice(0, showAllLeadership ? 6 : 3).map(([date, title, detail]) => (
-                <article key={title} className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
-                  <p className="pt-0.5 text-sm font-semibold text-textSecondary">{date}</p>
-                  <div className="border-l border-border pl-6">
-                    <h3 className="text-lg font-medium text-textSecondary">{title}</h3>
-                    <p className="mt-1 text-base md:text-lg leading-relaxed text-textPrimary">{detail}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <div className="mt-8 flex justify-center md:ml-[11.5rem]">
-              <button onClick={() => setShowAllLeadership((value) => !value)} className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-textSecondary transition-colors hover:border-textSecondary hover:text-textPrimary">{showAllLeadership ? "Show less" : "Show more"}</button>
-            </div>
-          </div>
-
-          <div id="awards" className="scroll-mt-24">
-            <h2 className="text-2xl font-semibold tracking-[-0.04em] text-textPrimary">Awards &amp; Honors</h2>
-            <div className="mt-8 space-y-8 md:space-y-10">
-              {[
-                ["2026.01", "Gold Prize + Meta Award · MIT Reality Hack", "SmartSight won both the overall Gold Prize and Meta's Best Use of the Meta Wearables Device Access Toolkit Showcasing a Hands-free Everyday Use Case."],
+                ["2025", "Researcher · SBU Blockchain Business Lab", "Built blockchain applications in a university lab."],
                 ["2025 — 2026", "SUNY Korea Institutional Scholarship", "Merit-based scholarship recipient, including $2,000 in Spring 2025 and $1,000 in Spring 2026."],
                 ["2024.08", "Encouragement Award · SeSAC Google Hackathon", "Awarded by the Seoul Business Agency for developing an innovative software solution."],
+                ["2024", "Senior AR Developer & Mentor · SNU XR Association × XREAL", "Led persistent mixed-reality experience development and mentored peers in spatial computing."],
+                ["2024", "University Student Mentor · SW Companion Hackathon", "Guided and supported participants at an event hosted by the Korea Foundation for the Advancement of Science and Creativity."],
                 ["2023.11", "Grand Prize · Incheon Global Campus Startup Idea Contest", "Awarded first place for pitching an entrepreneurial business model."],
                 ["2023.08", "Bronze Prize · OUTTA AI Bootcamp", "Received Excellent Team and Excellent Participant awards for technical performance."],
-                ["2026.05", "Magna Cum Laude · Stony Brook University", "Graduated with high honors, with a cumulative GPA of 3.77 / 4.0."],
-              ].slice(0, showAllAwards ? 6 : 3).map(([date, title, detail]) => (
+                ["2023", "Conference Staff · KWDC23", "Supported operations and logistics for the AsyncSwift developer conference."],
+                ["2023", "Student Reporter & Video Editor · Ministry of Foreign Affairs", "Created interactive cultural content, including interviews with national Taekwondo athletes."],
+              ].slice(0, showAllExperience ? undefined : 4).map(([date, title, detail]) => (
                 <article key={title} className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                   <p className="pt-0.5 text-sm font-semibold text-textSecondary">{date}</p>
                   <div className="border-l border-border pl-6">
-                    <h3 className="text-lg font-medium text-textSecondary">{title}</h3>
-                    <p className="mt-1 text-base md:text-lg leading-relaxed text-textPrimary">{detail}</p>
+                    <h3 className="text-lg font-semibold text-textPrimary">{title}</h3>
+                    <p className="mt-1 text-base md:text-lg leading-relaxed text-textSecondary">{detail}</p>
                   </div>
                 </article>
               ))}
             </div>
-            <div className="mt-8 flex justify-center md:ml-[11.5rem]">
-              <button onClick={() => setShowAllAwards((value) => !value)} className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-textSecondary transition-colors hover:border-textSecondary hover:text-textPrimary">{showAllAwards ? "Show less" : "Show more"}</button>
+            <div className="mt-8 ml-[6.5rem] pl-6 md:ml-[11.5rem]">
+              <button onClick={() => toggle(showAllExperience, setShowAllExperience, "experience-awards")} className="text-[17px] font-medium text-accent transition-opacity hover:opacity-70">{showAllExperience ? "Show less" : "Show all ›"}</button>
             </div>
           </div>
         </div>
       </section>
 
-      <div id="photo-dumps" className="scroll-mt-20 pt-16 md:pt-24">
+      <div id="photo-dumps" className="scroll-mt-20 bg-surface pt-16 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-medium uppercase tracking-[0.16em] text-textSecondary">Beyond the build</p>
           <h2 className="mt-3 text-4xl md:text-6xl font-bold tracking-tight text-textPrimary">Photo Dumps.</h2>
         </div>
         <PhotoCylinder images={highlightImages} />
+        <DemoReel />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      {/* footer continues the white of the section above, so there is no seam */}
+      <div className="bg-surface">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Footer - 마지막으로 나타남 */}
         <motion.footer
@@ -322,12 +313,19 @@ export default function Home() {
             delay: 1.8,
             ease: [0.22, 1, 0.36, 1]
           }}
-          className="mt-20 pt-8 border-t border-border"
+          className="pt-8 border-t border-border"
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-textSecondary">
             <p>© {new Date().getFullYear()} Dongchan Kim. All rights reserved.</p>
+            <nav className="flex gap-6">
+              <a className="transition-colors hover:text-textPrimary" href="/projects">Projects</a>
+              <a className="transition-colors hover:text-textPrimary" href="/contact">Contact</a>
+              <a className="transition-colors hover:text-textPrimary" href="https://github.com/Dongckim" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a className="transition-colors hover:text-textPrimary" href="https://www.linkedin.com/in/dongckim99/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </nav>
           </div>
         </motion.footer>
+      </div>
       </div>
     </main>
   );

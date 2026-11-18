@@ -1006,7 +1006,7 @@ export default function GlassIntro() {
             key={c.word || c.num || "hero"}
             ref={(el) => { captionRefs.current[i] = el; }}
             data-on={i === 0}
-            className={`group/cap pointer-events-none absolute bottom-[9vh] left-5 right-5 z-[4] md:left-7 ${i === 0 ? "max-w-[860px]" : "max-w-[620px]"}`}
+            className={`group/cap pointer-events-none absolute bottom-[9vh] left-5 right-5 z-[4] md:left-[max(2rem,calc((100vw-80rem)/2+2rem))] ${i === 0 ? "max-w-[860px]" : "max-w-[620px]"}`}
           >
             {c.num && i === 0 && <Mask step={0}><p className="mb-2 text-[clamp(17px,1.5vw,21px)] font-semibold tracking-[-0.015em] text-[#1d1d1f]">{c.num}</p></Mask>}
             {c.num && i !== 0 && <Mask step={0}><p data-eyebrow className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[#0066cc] group-data-[dark=true]/stage:text-[#2997ff]">{c.num}</p></Mask>}

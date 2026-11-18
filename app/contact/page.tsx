@@ -4,7 +4,7 @@ import { Github, Linkedin, Mail } from "lucide-react";
 const contacts = [
   {
     label: "Email",
-    value: "dck.alx@gmail.com",
+    value: "dck.alx [at] gmail [dot] com",
     href: "mailto:dck.alx@gmail.com",
     icon: Mail,
   },
@@ -30,7 +30,7 @@ export default function ContactPage() {
         <div className="mt-5 h-1 w-20 rounded-full bg-textPrimary" />
 
         <p className="mt-12 text-xl md:text-2xl leading-relaxed text-textSecondary">
-          Feel free to reach out through any of the following channels.
+          Say hello.
         </p>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,7 +58,6 @@ export default function ContactPage() {
         </div>
 
         <section className="mt-20 border-t border-border pt-10">
-          <p className="text-center text-xl md:text-2xl text-textSecondary">Feel free to check my availability.</p>
           <div className="mt-10 overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-[0_12px_28px_rgba(0,0,0,0.05)] md:p-4">
             <iframe
               src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FChicago&showPrint=0&hl=en&showTabs=0&showNav=0&showCalendars=0&src=ZG9uZ2NoYW5raW0xOTk5QGdtYWlsLmNvbQ&color=%23039be5"
@@ -71,7 +70,7 @@ export default function ContactPage() {
         </section>
 
         <div className="mt-16 text-center">
-          <p className="text-lg text-textSecondary">I&apos;m always happy to connect about AI, XR, and the next interface.</p>
+          <p className="text-lg text-textSecondary">Let&apos;s talk about what you see next.</p>
           <Link
             href="mailto:dck.alx@gmail.com"
             className="mt-6 inline-flex rounded-full bg-textPrimary px-6 py-3 text-sm font-medium text-background transition-transform hover:scale-[1.03]"

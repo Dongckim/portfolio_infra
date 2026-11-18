@@ -104,7 +104,7 @@ function StageBar({ label, stages, scale }: { label: string; stages: StageTiming
   );
 }
 
-const youtubeId = (url: string) => url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/)?.[1];
+export const youtubeId = (url: string) => url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/)?.[1];
 
 /** Shows the YouTube thumbnail and loads the player only on click, so the page stays light. */
 function YouTube({ url, title }: { url: string; title: string }) {
@@ -183,8 +183,10 @@ export default function ProjectPage({ project }: { project: Project }) {
 
   const meta = [s.role, s.team, s.duration].filter(real);
   const [hero, ...rest] = s.media ?? [];
-  const gallery = rest.filter((m) => !m.title);
-  const splits = rest.filter((m) => m.title);
+  const grid = s.mediaLayout === "grid";
+  // grid pages: every clip, the first included, sits in one even grid (source clips are small, so no full-width hero)
+  const gallery = grid ? [] : rest.filter((m) => !m.title);
+  const splits = grid ? (s.media ?? []) : rest.filter((m) => m.title);
   const stats = s.stats.filter((x) => real(x.value));
   const ratio = firstNumber(String(m.headline.after)) / firstNumber(String(m.headline.before));
 
@@ -269,7 +271,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <figcaption className="mt-4 text-center text-sm text-textSecondary">Watch the {s.title} demo</figcaption>
             </figure>
           )}
-          {hero && (
+          {hero && !grid && (
             <figure className={s.video ? "mt-6" : "mt-16"}>
               <div className="overflow-hidden rounded-[28px] bg-muted">
                 <Media src={hero.src} alt={hero.alt} priority={!s.video} />
@@ -294,7 +296,27 @@ export default function ProjectPage({ project }: { project: Project }) {
               ))}
             </div>
           )}
-          {splits.map((m) => (
+          {s.mediaLayout === "grid" && splits.length > 0 && (
+            <div className={`mt-16 grid gap-x-6 gap-y-12 sm:grid-cols-2 ${splits.length >= 5 ? "lg:grid-cols-3" : ""}`}>
+              {splits.map((m, i) => (
+                <figure key={m.src}>
+                  <div className="relative aspect-square overflow-hidden rounded-[20px] bg-muted">
+                    {m.src.endsWith(".mp4") ? (
+                      <video src={m.src} poster={m.src.replace(/\.mp4$/, "-poster.jpg")} aria-label={m.alt} autoPlay muted loop playsInline preload="metadata" className="h-full w-full object-cover" />
+                    ) : (
+                      <Image src={m.src} alt={m.alt} fill sizes="(max-width: 768px) 100vw, 600px" className="object-cover" />
+                    )}
+                  </div>
+                  <figcaption className="mt-5">
+                    <p className="font-mono text-[12px] tabular-nums text-textSecondary">{String(i + 1).padStart(2, "0")}</p>
+                    <h3 className="mt-2 text-[22px] font-semibold leading-snug tracking-[-0.015em]">{m.title ?? m.alt}</h3>
+                    {m.body && <p className="mt-2 text-[15px] leading-relaxed text-textSecondary">{md(m.body)}</p>}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+          {s.mediaLayout !== "grid" && splits.map((m) => (
             <figure key={m.src} className="mt-6 grid items-center gap-8 rounded-[28px] bg-surface p-6 md:grid-cols-[7fr_5fr] md:gap-12 md:p-10">
               <div className="overflow-hidden rounded-[20px] bg-muted">
                 <Media src={m.src} alt={m.alt} />

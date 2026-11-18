@@ -62,6 +62,8 @@ export interface Project {
     /** Demo footage / screenshots. The first item is the hero visual. */
     /** An item with `title` + `body` renders as an image-and-text split row instead of a gallery tile. */
     media?: Array<{ src: string; alt: string; title?: string; body?: string }>;
+    /** How titled media render: "split" (default) one full-width row each; "grid" equal tiles, two per row. */
+    mediaLayout?: "split" | "grid";
   };
   context: {
     lede: string;
