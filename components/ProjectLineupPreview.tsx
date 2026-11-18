@@ -25,6 +25,16 @@ const presentation: Record<string, Pick<Work, "category" | "image" | "system" | 
     system: ["Glasses", "API", "S3", "Vision", "Realtime"],
     featured: true,
   },
+  glassistant: {
+    category: "Wearable AI agent · Meta hackathon",
+    image: "/glassistant-watching-poster.jpg",
+    system: ["Glasses", "iPad", "Agent", "SAM", "Robot"],
+  },
+  arc: {
+    category: "CHI 2027 conference companion",
+    image: null,
+    system: ["Feed", "Build", "Planner", "Venue", "PWA"],
+  },
   tryl: {
     category: "AI fashion try-on",
     image: "/tryl-1.png",

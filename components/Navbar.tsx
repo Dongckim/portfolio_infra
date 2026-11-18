@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Moon, Sun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { projectDetails } from "@/data/projects";
+import { projects as projectDetails } from "@/content/projects";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Navbar() {
@@ -64,7 +64,7 @@ export default function Navbar() {
         {
           title: "Projects",
           items: projectDetails.map((project) => ({
-            label: project.title,
+            label: project.summary.title,
             href: `/projects/${project.slug}`,
           })),
         },

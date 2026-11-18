@@ -1,4 +1,4 @@
-import { Activity, Terminal, FileText, Cpu, Shield, Server, Camera, ShoppingBag, Glasses } from "lucide-react";
+import { Activity, Terminal, FileText, Cpu, Shield, Server, Camera, ShoppingBag, Glasses, FlaskConical, Compass } from "lucide-react";
 
 export interface Project {
   id: string;
@@ -17,6 +17,22 @@ export const projects: Project[] = [
     tags: ["Wearables", "OpenAI", "AWS", "Realtime"],
     icon: Glasses,
     colSpan: 2,
+  },
+  {
+    id: "glassistant",
+    title: "Glassistant",
+    description: "A hands-free lab assistant on Ray-Ban Meta: it logs wells, steps and timers by voice and vision, then turns the as-run record into simulator-checked Opentrons robot code.",
+    tags: ["Wearables", "Agents", "SAM 3.1", "FastAPI", "SwiftUI"],
+    icon: FlaskConical,
+    colSpan: 1,
+  },
+  {
+    id: "arc",
+    title: "ARC: Academic Research Compass",
+    description: "A CHI 2027 companion that turns 2,600+ papers into a walkable personal day, with an on-device planner, step-free directions and live captions.",
+    tags: ["React", "TypeScript", "PWA", "Vercel", "Accessibility"],
+    icon: Compass,
+    colSpan: 1,
   },
   {
     id: "tryl",
@@ -95,7 +111,7 @@ export const highlights: Highlight[] = [
   { title: "Founder of Tryl: AI Fashion Try-On (tryl.me)", href: "https://tryl.me", linkText: "tryl.me" },
   { title: "MIT Reality Hack 2026 - Grand Prize (Gold Award) Winner" },
   {
-    title: "MIT Reality Hack 2026 - Meta Track Winner",
+    title: "MIT Reality Hack 2026 - Best Use of the Meta Wearables Device Access Toolkit (Sponsored by Meta)",
     badge: {
       text: "Featured on Meta Developer Blog",
       href: "https://developers.meta.com/blog/explore-whats-possible-with-wearables-device-access-toolkit/?utm_source=social-li&utm_medium=M4D&utm_campaign=organic&utm_content=wearables",
