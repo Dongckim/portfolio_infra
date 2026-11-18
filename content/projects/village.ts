@@ -16,7 +16,7 @@ export const village: Project = {
       Infra: ["AWS S3", "CloudFront", "Route 53"],
     },
     stats: [
-      { value: "172%", label: "Frontend performance improvement. TODO: name the metric" },
+      { value: "172%", label: "Frontend performance improvement" },
       { value: "6 weeks", label: "From planning to final presentation" },
       { value: "1:1", label: "Real-time chat between renter and lender" },
     ],
@@ -67,15 +67,15 @@ export const village: Project = {
         options: ["Ship one bundle", "Route- and component-level lazy loading"],
         decision: "Lazy-load routes and components, and flatten nested structures that re-rendered for no reason.",
         result: "Less JavaScript runs on first load.",
-        tradeoff: "TODO: confirm. For example, lazily loaded routes show a brief loading state.",
+        tradeoff: "Lazy loading is not free: on the listing detail page it slowed the image slider, so those components went back to regular imports.",
       },
     ],
   },
 
   measurement: {
-    lede: "Together, these changes improved frontend performance by 172%. The tool and baseline behind that figure were not recorded.",
+    lede: "Together, these changes improved frontend performance by 172%, shown in the demo video.",
     headline: {
-      label: "Frontend performance, before and after optimization (TODO: name the metric)",
+      label: "Frontend performance, before and after optimization",
       before: "TODO: baseline value",
       after: "TODO: optimized value (172% improvement)",
     },
@@ -108,7 +108,7 @@ export const village: Project = {
     lede: "TODO: confirm what you would change now.",
     items: [
       {
-        today: "The 172% figure has no recorded metric or baseline.",
+        today: "TODO: confirm what you would change now.",
         atScale: "TODO: confirm. For example, track Core Web Vitals per release.",
       },
     ],

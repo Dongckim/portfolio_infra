@@ -6,8 +6,8 @@ export const contentMonitor: Project = {
     eyebrow: "Web reliability",
     title: "Web Content Integrity Monitor",
     tagline: "A cron pipeline that reports only the meaningful changes in external documentation.",
-    role: "TODO: role",
-    team: "TODO: team size",
+    role: "Developer",
+    team: "Solo",
     duration: "TODO: duration",
     links: { repo: "https://github.com/Dongckim/Web-Content-Integrity-Monitor" },
     stack: {
@@ -28,7 +28,7 @@ export const contentMonitor: Project = {
     problem:
       "Diffing raw HTML from non-standard pages like Wikipedia raises false positives on every dynamic element. " +
       "The pipeline had to isolate semantic content and run the whole scrape, archive and diff lifecycle without a human.",
-    myScope: "TODO: confirm. I built the pipeline end to end: scraping, DOM sanitising, archiving and the diff report.",
+    myScope: "I built the pipeline end to end on my own: scraping, DOM sanitising, archiving and the diff report.",
   },
 
   architecture: {
@@ -197,7 +197,7 @@ export const contentMonitor: Project = {
     bullets: [
       "**Graceful degradation**: network failures (404/500) during ingestion are logged to `stderr` and the batch keeps going.",
       "`diffcheck` handles a missing daily archive with a clear diagnostic message instead of crashing.",
-      "TODO: tests or validation for the sanitiser and diff engine, if any exist.",
+      "A pytest suite of 9 cases covers both tools: usage errors, missing CSV or archives, converting a local MediaWiki fixture, and changed vs unchanged pages.",
     ],
   },
 

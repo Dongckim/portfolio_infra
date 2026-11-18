@@ -6,10 +6,10 @@ export const foldingBirding: Project = {
     eyebrow: "Mixed reality exhibit · Meta Quest 3",
     title: "Folding Birding",
     tagline: "Visitors fold a paper bird, then meet it alive in mixed reality.",
-    role: "TODO: your role (Dev team: texturing, scan, XR, admin tablet)",
-    team: "TODO: team size (Research, Dev and Design sub-teams)",
-    duration: "TODO: dates",
-    links: {},
+    role: "Developer, Dev team (spatial anchors)",
+    team: "12 people: 3 Research, 5 Dev, 4 Design",
+    duration: "May–June 2025",
+    links: { repo: "https://github.com/folding-birding-old/FoldingBirding" },
     stack: {
       XR: ["Unity", "C#", "Meta XR SDK", "Interaction SDK hand tracking", "MR passthrough", "OVRSpatialAnchor (MRUK)"],
       Scan: ["OpenCV", "Python", "REST API"],
@@ -36,7 +36,9 @@ export const foldingBirding: Project = {
     problem:
       "A visitor's hand-decorated paper bird had to become a living 3D bird in the room within the visit. " +
       "And the virtual space had to stay locked to the physical hall across every session of a long-running exhibit.",
-    myScope: "TODO: which parts you built (texturing, scan, XR, admin tablet).",
+    myScope:
+      "I built the spatial anchors in the Unity app: saving and loading OVRSpatialAnchor, keeping their UUIDs in PlayerPrefs, deleting and resetting anchors, and a small status UI. " +
+      "I then locked the anchor prefab to the floor (fixed Y, no X/Z tilt) and hid the debug UUID labels, while the Dev team as a whole built texturing, scanning, the XR app and the admin tablet.",
   },
 
   architecture: {
@@ -86,7 +88,7 @@ export const foldingBirding: Project = {
         options: ["Re-place content by hand each session", "Persisted OVRSpatialAnchor with UUIDs"],
         decision: "Anchor UUIDs are serialized to local storage and relocalized at startup.",
         result: "The fence and bird spawn points stay aligned with the exhibit hall across sessions.",
-        tradeoff: "TODO: confirm. For example, anchors are stored per device, so each headset needs its own setup.",
+        tradeoff: "The list of anchor UUIDs lives in PlayerPrefs on the headset, so it is tied to that one device.",
       },
       {
         title: "Gestures instead of buttons",
@@ -125,20 +127,20 @@ export const foldingBirding: Project = {
   },
 
   limits: {
-    lede: "TODO: confirm what broke or felt fragile during the exhibit.",
+    lede: "The team's next steps show what was still missing.",
     items: [
       {
-        today: "TODO: confirm. For example, anchors are saved locally on one headset.",
-        atScale: "TODO: confirm. For example, shared cloud anchors across several headsets.",
+        today: "Anchor UUIDs are saved on one headset, and the experience is built for one visitor at a time.",
+        atScale: "Next steps listed a multi-user scenario and running the whole flow inside the headset.",
       },
     ],
   },
 
   learnings: {
-    lede: "TODO: one-sentence summary of what this project taught you.",
+    lede: "My first real team collaboration, on a project whose direction kept changing.",
     items: [
-      "TODO: confirm. For example, a physical artifact makes the virtual one matter.",
-      "TODO: confirm. For example, exhibits need persistence more than features.",
+      "Collaboration was new to me, and as the direction kept shifting, much of my time went into the learning curve.",
+      "A dev lead who steers the team well is what got a result out of that.",
     ],
   },
 

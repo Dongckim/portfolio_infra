@@ -77,7 +77,7 @@ export default function Navbar() {
         {
           title: "Explore",
           items: [
-            { label: "Resume", href: "/DongchanKim_Resume.pdf" },
+            { label: "Resume", href: "/resume" },
             { label: "Blog", href: "https://dongckim.github.io" },
           ],
         },

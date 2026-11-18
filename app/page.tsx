@@ -232,12 +232,24 @@ export default function Home() {
                   </article>
                   <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                     <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.04</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">
+                      Interviewed by <a className="underline decoration-border underline-offset-4 transition-colors hover:text-accent" target="_blank" rel="noopener noreferrer" href="https://news.stonybrook.edu/university/stony-brook-student-showcases-ai-study-tool-at-mit-reality-hack/">SBU News</a> about building SmartSight at MIT Reality Hack.
+                    </p>
+                  </article>
+                  <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                    <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.04</p>
                     <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">Launched Tryl, an AI-powered fashion try-on experience.</p>
                   </article>
                   <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
                     <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.04</p>
                     <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">
                       SmartSight was featured in Meta&apos;s <a className="underline decoration-border underline-offset-4 transition-colors hover:text-accent" href="https://developers.meta.com/blog/explore-whats-possible-with-wearables-device-access-toolkit/" target="_blank" rel="noopener noreferrer">Wearables Device Access Toolkit</a> developer story.
+                    </p>
+                  </article>
+                  <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">
+                    <p className="pt-0.5 text-sm font-semibold text-textSecondary">2026.02</p>
+                    <p className="border-l border-border pl-6 text-base md:text-lg leading-relaxed text-textPrimary">
+                      Featured in a <a className="underline decoration-border underline-offset-4 transition-colors hover:text-accent" target="_blank" rel="noopener noreferrer" href="https://sunykorea.ac.kr/news/html/sub04/04.html?mode=V&amp;mng_no=1321&amp;category=Students">SUNY Korea News Center</a> story on winning the Grand Prize at MIT Reality Hack 2026.
                     </p>
                   </article>
                   <article className="grid grid-cols-[6.5rem_1fr] md:grid-cols-[11.5rem_1fr]">

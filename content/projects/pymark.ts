@@ -9,7 +9,7 @@ export const pymark: Project = {
     role: "TODO: role",
     team: "TODO: team size",
     duration: "TODO: duration",
-    links: { repo: "https://github.com/Dongckim/md2html" },
+    links: {},
     stack: {
       Language: ["Python", "Regex"],
       Testing: ["Pytest", "TDD"],

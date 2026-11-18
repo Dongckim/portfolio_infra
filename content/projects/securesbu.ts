@@ -7,8 +7,8 @@ export const securesbu: Project = {
     title: "SecureSBU",
     tagline: "A Teams chatbot that answers HIPAA policy questions from the source documents.",
     role: "Full Stack Engineer & Team Leader",
-    team: "TODO: team size",
-    duration: "TODO: project duration",
+    team: "4",
+    duration: "Hackathon weekend (Nov 8–9, 2025)",
     links: { demo: "https://www.youtube.com/watch?v=g81AkDZfJF4" },
     stack: {
       Frontend: ["React", "TypeScript"],

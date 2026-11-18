@@ -185,7 +185,7 @@ export const glassistant: Project = {
       },
       {
         today: "Private mode trades accuracy and features for privacy: 23 / 33 multi-action, 20–25 s cold starts, no Watching or Handoff.",
-        atScale: "TODO: confirm. For example, keep a warm GPU during lab hours and bring Watching to the self-hosted path.",
+        atScale: "Keep one GPU container warm (`GLIMMER_KEEP_WARM=1`) to skip cold starts, at $46.80 a day on an L40S.",
       },
     ],
   },

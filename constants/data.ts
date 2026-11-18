@@ -59,14 +59,6 @@ export const projects: Project[] = [
     colSpan: 2,
   },
   {
-    id: "autobass",
-    title: "AutoBASS CLI",
-    description: "Built a robust CLI utility for automated artifact backups with timestamped versioning and error logging.",
-    tags: ["Bash", "Rsync", "Linux"],
-    icon: Terminal,
-    colSpan: 1,
-  },
-  {
     id: "pymark",
     title: "PyMark Renderer",
     description: "Developed a dependency-free Markdown-to-HTML engine with 90%+ test coverage.",

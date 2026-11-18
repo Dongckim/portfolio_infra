@@ -3,14 +3,12 @@ import { smartsight } from "./smartsight";
 import { glassistant } from "./glassistant";
 import { arc } from "./arc";
 import { contentMonitor } from "./content-monitor";
-import { autobass } from "./autobass";
 import { pymark } from "./pymark";
 import { xrOptimization } from "./xr-optimization";
 import { securesbu } from "./securesbu";
 import { ape } from "./ape";
 import { cortexSdk } from "./cortex-sdk";
 import { tryl } from "./tryl";
-import { ptsdVr } from "./ptsd-vr";
 import { foldingBirding } from "./folding-birding";
 import { unicare } from "./unicare";
 import { village } from "./village";
@@ -22,14 +20,12 @@ export const projects: Project[] = [
   glassistant,
   smartsight,
   contentMonitor,
-  autobass,
   pymark,
   xrOptimization,
   securesbu,
   ape,
   cortexSdk,
   tryl,
-  ptsdVr,
   foldingBirding,
   unicare,
   village,

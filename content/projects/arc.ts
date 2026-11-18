@@ -123,8 +123,8 @@ export const arc: Project = {
   },
 
   measurement: {
-    lede: "Splitting the app data cut the first screen from 2.02 MB to 393 KB gzip, and every feature has a measured budget.",
-    headline: { label: "First-screen data, gzip", before: "2.02 MB", after: "393 KB" },
+    lede: "Splitting the app data cut the first screen from 2.02 MB to 402 KB gzip, and every feature has a measured budget.",
+    headline: { label: "First-screen data, gzip", before: "2.02 MB", after: "402 KB" },
     method: {
       network: "TODO: network profile for the first-screen measurement",
       samples: "TODO: runs per measurement",
@@ -171,7 +171,7 @@ export const arc: Project = {
       },
       {
         today: "Rate limits live in memory, so each function instance counts separately.",
-        atScale: "TODO: confirm. For example, a shared store for rate limits.",
+        atScale: "Move to the host's own rate limiting once a host is chosen; the Soniox spending limit stays the hard daily cap for captions.",
       },
     ],
   },

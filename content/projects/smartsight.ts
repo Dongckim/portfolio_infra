@@ -20,7 +20,7 @@ export const smartsight: Project = {
     stats: [
       { value: "~13 s → ~5 s", label: "Upload-and-analyze latency" },
       { value: "0", label: "Native deps in the audio pipeline (no ffmpeg)" },
-      { value: "7 / ~50", label: "Jest suites / cases, CI-gated" },
+      { value: "7 / 78", label: "Jest suites / cases, CI-gated" },
     ],
     awards: [
       { title: "Gold Prize", event: "MIT Reality Hack 2026 · Overall" },
@@ -245,7 +245,7 @@ export const smartsight: Project = {
   reliability: {
     lede: "Any one subsystem can fail and the analysis response still comes back, with 7 mocked Jest suites gating every merge.",
     bullets: [
-      "**7 Jest suites (~50 cases)** cover controllers, services and middleware with S3, OpenAI and Prisma mocked. **GitHub Actions** runs them on every push and PR, and a failure blocks the merge.",
+      "**7 Jest suites (78 cases)** cover controllers, services and middleware with S3, OpenAI and Prisma mocked. **GitHub Actions** runs them on every push and PR, and a failure blocks the merge.",
       "Session validation returns 4xx before any S3 or OpenAI call is made.",
       "S3 and OpenAI errors reach a global error middleware that returns structured JSON.",
       "Auth returns 401 for a missing token, a blacklisted JTI or an invalid Google token. Refresh revokes and reissues inside one `$transaction`.",

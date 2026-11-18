@@ -8,7 +8,7 @@ export const unicare: Project = {
     tagline: "A job-matching platform connecting foreign caregivers with Korean care companies.",
     role: "Frontend Lead and Vice Team Lead",
     team: "5 (planning/design, 2 frontend, backend, backend/AI)",
-    duration: "TODO: hackathon dates",
+    duration: "3 weeks (Jul 13 – Aug 2, 2024)",
     links: { repo: "https://github.com/Dongckim/2024-Sprout-Hackathon-Frontend", demo: "https://sprout-hackathon.vercel.app/" },
     stack: {
       Frontend: ["React 18", "JavaScript", "Vite", "TanStack Query v5", "Zustand", "Tailwind CSS", "WebRTC audio"],
@@ -71,12 +71,12 @@ export const unicare: Project = {
         { from: 2, to: 4 },
         { from: 4, to: 5 },
         { from: 3, to: 6, label: "voice" },
-        { from: 2, to: 6 },
+        { from: 4, to: 6 },
         { from: 6, to: 7 },
       ],
     },
-    caption: "Highlighted: a chatbot question, from the client to the AI service and back. TODO: confirm how the AI service is reached.",
-    highlightedPath: ["React Client (Vite)", "TanStack Query (server state)", "FastAPI AI Service", "AI Answers"],
+    caption: "Highlighted: a chatbot question, from the client to the AI service and back. The client posts it to the Spring Boot API, which forwards it to the FastAPI service.",
+    highlightedPath: ["React Client (Vite)", "TanStack Query (server state)", "Spring Boot REST API", "FastAPI AI Service", "AI Answers"],
   },
 
   decisions: {

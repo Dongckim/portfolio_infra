@@ -9,7 +9,7 @@ export const xrOptimization: Project = {
     role: "VR Software Engineer",
     team: "TODO: team size",
     duration: "TODO: duration",
-    links: { repo: "https://github.com/Dongckim/xr-sync", demo: "https://youtube.com/watch?v=UoeiSMDjMIo" },
+    links: { demo: "https://youtube.com/watch?v=UoeiSMDjMIo" },
     stack: {
       Headset: ["Unity", "C#", "HLSL (ShaderLab)", "Meta XR SDK", "XR Interaction Toolkit", "Passthrough API"],
       Server: ["Node.js", "Socket.io"],

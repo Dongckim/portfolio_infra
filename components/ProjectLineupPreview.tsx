@@ -50,11 +50,6 @@ const presentation: Record<string, Pick<Work, "category" | "image" | "system" | 
     image: "/ape-demo.gif",
     system: ["Desktop", "SSH", "S3", "EC2"],
   },
-  autobass: {
-    category: "Developer utility",
-    image: null,
-    system: ["CLI", "Schedule", "Archive", "Logs"],
-  },
   pymark: {
     category: "Developer tooling",
     image: null,

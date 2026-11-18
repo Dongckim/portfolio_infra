@@ -18,7 +18,7 @@ export const cortexSdk: Project = {
     stats: [
       { value: "60%+", label: "Target cut in frames sent to VLM APIs (design target)" },
       { value: "2×", label: "Target battery extension (design target)" },
-      { value: "186", label: "pytest tests across capture, optimizer, memory, graph and compiler" },
+      { value: "176", label: "pytest tests across capture, optimizer, memory, graph and compiler" },
     ],
     media: [
       { src: "/cortex-demo.mp4", alt: "CORTEX filtering redundant camera frames" },
@@ -167,7 +167,7 @@ export const cortexSdk: Project = {
         title: "SSIM instead of pixel difference for scene change",
         problem: "Naive pixel subtraction flags minor lighting changes and JPEG artifacts as a new scene.",
         options: ["Pixel diff", "Structural Similarity (SSIM)"],
-        decision: "An SSIM gate against a persisted reference frame, with a tunable threshold of 0.85–0.95.",
+        decision: "An SSIM gate against a persisted reference frame. The threshold follows the battery mode: 0.90 (Aggressive), 0.80 (Balanced, default), 0.65 (Power save).",
         result: "Robust to small lighting and compression noise, and integrators can tune sensitivity against battery savings.",
         tradeoff: "A sudden flash drops SSIM to ~0.4 with no semantic change, so the threshold needs tuning per environment.",
       },
@@ -180,11 +180,11 @@ export const cortexSdk: Project = {
         tradeoff: "A blur threshold set too high also rejects legitimately low-texture scenes, such as all-black or all-white frames.",
       },
       {
-        title: "Lower JPEG quality instead of resolution",
+        title: "Encode for the network, not one fixed setting",
         problem: "Accepted frames still need to be as small as possible without hurting VLM answers.",
-        options: ["Scale resolution down", "Adaptive JPEG quality"],
-        decision: "Drop JPEG quality from 85 to 55, adjusted per frame against the current network state.",
-        result: "Payload shrinks ~3× with minimal VLM accuracy loss on text and object recognition.",
+        options: ["One fixed resolution and quality", "Resolution, format and quality picked per network condition"],
+        decision: "Pick the encoding from the network condition: WiFi 1024 px WebP q85, LTE 640 px WebP q70, weak signal 320 px JPEG q60, and queue frames while offline.",
+        result: "Bytes per frame track the link instead of the camera; 60%+ payload reduction is the design target, not yet benchmarked.",
         tradeoff: "TODO: confirm the measured accuracy loss and on which tasks.",
       },
     ],
@@ -211,9 +211,9 @@ export const cortexSdk: Project = {
   },
 
   reliability: {
-    lede: "No single bad frame can crash the pipeline, and 186 pytest tests cover the built layers.",
+    lede: "No single bad frame can crash the pipeline, and 176 pytest tests cover the built layers.",
     bullets: [
-      "**186 pytest tests** across optimizer (59), memory (35), graph (33), capture (29) and compiler (20). The SSIM gate, blur detector, ROI crop and adaptive encoder each have isolated tests using synthetic frames.",
+      "**176 pytest tests** across optimizer (59), memory (35), graph (33), capture (29) and compiler (20). The SSIM gate, blur detector, ROI crop and adaptive encoder each have isolated tests using synthetic frames.",
       "A webcam demo with a live HUD showed accepted and rejected counts, SSIM scores and payload sizes across 3 scene types: static whiteboard, hand movement and walking.",
       "L1 gate errors such as an OpenCV decode failure return `(False, 0.0)`, so the frame is dropped instead of crashing the pipeline.",
       "Out-of-bounds L2 ROI crops are clamped with `np.clip` and never raise `IndexError`.",
@@ -298,11 +298,12 @@ export const cortexSdk: Project = {
   │         └─ clamp to frame boundary
   │
   ├─ Adaptive Encoder
-  │    ├─ WiFi detected      → JPEG quality 85, max 1024px
-  │    ├─ LTE detected       → JPEG quality 70, max 768px
-  │    └─ low-battery mode   → JPEG quality 55, max 512px
+  │    ├─ WiFi               → WebP quality 85, max 1024px
+  │    ├─ LTE                → WebP quality 70, max 640px
+  │    ├─ weak signal        → JPEG quality 60, max 320px
+  │    └─ offline            → queued until the link returns
   │
-  └─ Output: compressed JPEG bytes (typically 40-120 KB vs 2+ MB raw)`,
+  └─ Output: compressed WebP / JPEG bytes`,
     },
     {
       kind: "code",
