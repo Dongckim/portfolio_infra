@@ -23,6 +23,12 @@ export default function Home() {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+  // the browser jumps to #hash before the intro mounts (it adds ~35 screens above), so jump again once it has
+  useEffect(() => {
+    if (mobile === null || !location.hash) return;
+    const id = decodeURIComponent(location.hash.slice(1));
+    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "instant" as ScrollBehavior, block: "start" }));
+  }, [mobile]);
   // Collapsing removes rows above the button, which would leave the reader far down the page:
   // bring the section's heading back into view when it shrinks.
   const toggle = (open: boolean, set: (v: boolean) => void, id: string) => {

@@ -870,7 +870,10 @@ export default function GlassIntro() {
         // starts bottom-right over the footage; as the board forms in Understand it glides to sit beside it
         // (same geometry as drawFeed's board)
         const bw = Math.min(w * 0.46, h * 1.17, h * 1.14 - 360), bh = bw / 1.5, mv = soft(beat(sceneE[1], [UND.glide[0], 1.0]));
-        const x0 = w - 28 - el0.offsetWidth, y0 = h * 0.91 - el0.offsetHeight, x1 = w / 2 + bw / 2 + 20, y1 = h * 0.38 - bh / 2 - 16;
+        // narrow panels (short or small windows) drop the detail column instead of wrapping every row
+        el0.dataset.compact = String(el0.offsetWidth < 320);
+        // never under the navbar (56px), nor, at its right-edge start, under the Skip button (ends ~112px)
+        const x0 = w - 28 - el0.offsetWidth, y0 = Math.max(124, h * 0.91 - el0.offsetHeight), x1 = w / 2 + bw / 2 + 20, y1 = Math.max(68, h * 0.38 - bh / 2 - 16);
         const po = el0.querySelector<HTMLElement>("[data-po]"); if (po) po.style.opacity = cur >= 5 ? "1" : "0"; // policy output belongs to Predict
         el0.style.left = `${lerp(x0, x1, mv)}px`; el0.style.top = `${lerp(y0, y1, mv)}px`;
         el0.querySelectorAll<HTMLElement>("[data-st]").forEach((el) => {
@@ -960,7 +963,7 @@ export default function GlassIntro() {
         <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full touch-pan-y" />
 
         {/* the pipeline as it runs: a quiet readout bottom-right through See → Predict */}
-        <div ref={pipeRef} aria-hidden className="pointer-events-none absolute z-[4] hidden w-[min(360px,calc(50vw-min(23vw,58.5vh)-48px))] rounded-2xl bg-black/85 p-4 text-white opacity-0 backdrop-blur-md md:block">
+        <div ref={pipeRef} aria-hidden className="group/pipe pointer-events-none absolute z-[4] hidden w-[min(360px,calc(50vw-min(23vw,58.5vh)-48px))] rounded-2xl bg-black/85 p-4 text-white opacity-0 backdrop-blur-md md:block">
           <p className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#2997ff]" />On-device pipeline</p>
           <ol className="border-l border-white/15">
             {PIPELINE.map(([name, detail, st], i) => (
@@ -968,7 +971,7 @@ export default function GlassIntro() {
                 <span className="absolute -left-px top-0 h-full w-[2px] bg-[#2997ff] opacity-0 group-data-[state=on]:opacity-100" />
                 <p className="flex items-baseline justify-between gap-3">
                   <span className="text-[15px] font-semibold tracking-[-0.01em]"><span className="mr-2 font-mono text-[11px] font-normal text-white/40">{String(i + 1).padStart(2, "0")}</span>{name}</span>
-                  <span className="font-mono text-[12px] tabular-nums text-white/70 group-data-[state=on]:text-[#2997ff]">{detail}</span>
+                  <span className="font-mono text-[12px] tabular-nums text-white/70 group-data-[state=on]:text-[#2997ff] group-data-[compact=true]/pipe:hidden">{detail}</span>
                 </p>
               </li>
             ))}
