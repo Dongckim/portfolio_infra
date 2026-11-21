@@ -529,7 +529,8 @@ export default function GlassIntro() {
       if (eUnd <= UND.glide[0]) return;
 
       // Understand → Predict: one centred board that never moves; in Throw it folds back onto the players
-      const bw = mob ? cw * 0.9 : Math.min(cw * 0.46, ch * 1.17), bh = bw / (mob ? 1.25 : 1.5), keep = 1 - back; // back already eases out again in Score
+      // the third cap keeps the board top (and the label + question above it, ~50px) below the navbar on wide, short screens (ultrawide/curved monitors)
+      const bw = mob ? cw * 0.9 : Math.min(cw * 0.46, ch * 1.17, (h * 1.14 - 360) * dpr), bh = bw / (mob ? 1.25 : 1.5), keep = 1 - back; // back already eases out again in Score
       if (keep <= 0.001) return;
       const BX = cw * 0.5 - bw / 2, BY = ch * (mob ? 0.3 : 0.38) - bh / 2, at = (u: number, v: number) => [BX + u * bw, BY + v * bh];
       const key = `${cw}x${ch}`;
@@ -797,7 +798,7 @@ export default function GlassIntro() {
         document.documentElement.style.setProperty("--about-in", String(soft(seg(outK, 0.6, 1))));
         stageRef.current.style.opacity = String(fade);
         stageRef.current.style.visibility = fade < 0.01 ? "hidden" : "visible";
-        stageRef.current.style.pointerEvents = fade < 0.5 ? "none" : "";
+        stageRef.current.style.pointerEvents = fade < 0.5 ? "none" : "auto";
         const bv = returning ? Math.round(lerp(0, 245, bgK)) : darkScene ? 0 : 245;
         stageRef.current.style.backgroundColor = returning ? `rgb(${bv},${bv},${Math.round(lerp(0, 247, bgK))})` : darkScene ? DARK_BG : LIGHT_BG;
         if (stepsRef.current) stepsRef.current.style.opacity = darkScene || p >= 0.57 ? "0" : "1";
@@ -868,7 +869,7 @@ export default function GlassIntro() {
         el0.style.opacity = String(on ? clamp01((p - 0.585) / 0.01) * (1 - clamp01((p - 0.8) / 0.01)) : 0);
         // starts bottom-right over the footage; as the board forms in Understand it glides to sit beside it
         // (same geometry as drawFeed's board)
-        const bw = Math.min(w * 0.46, h * 1.17), bh = bw / 1.5, mv = soft(beat(sceneE[1], [UND.glide[0], 1.0]));
+        const bw = Math.min(w * 0.46, h * 1.17, h * 1.14 - 360), bh = bw / 1.5, mv = soft(beat(sceneE[1], [UND.glide[0], 1.0]));
         const x0 = w - 28 - el0.offsetWidth, y0 = h * 0.91 - el0.offsetHeight, x1 = w / 2 + bw / 2 + 20, y1 = h * 0.38 - bh / 2 - 16;
         const po = el0.querySelector<HTMLElement>("[data-po]"); if (po) po.style.opacity = cur >= 5 ? "1" : "0"; // policy output belongs to Predict
         el0.style.left = `${lerp(x0, x1, mv)}px`; el0.style.top = `${lerp(y0, y1, mv)}px`;
@@ -950,9 +951,9 @@ export default function GlassIntro() {
   if (status === "error") return null;
 
   return (
-    <section ref={sectionRef} aria-label={UI.section} className="relative z-10 h-[3500vh]">
+    <section ref={sectionRef} aria-label={UI.section} className="pointer-events-none relative z-10 h-[3500vh]">
       {/* the whole stage fades out at the end, revealing the About section tucked underneath */}
-      <div ref={stageRef} data-dark="false" style={{ backgroundColor: LIGHT_BG }} className="group/stage sticky top-0 h-screen overflow-hidden text-[#1d1d1f]">
+      <div ref={stageRef} data-dark="false" style={{ backgroundColor: LIGHT_BG }} className="group/stage pointer-events-auto sticky top-0 h-screen overflow-hidden text-[#1d1d1f]">
         {/* what the wearer sees: scrubbed footage + detections, under the 3D glasses so it shows through the lenses */}
         <canvas ref={feedRef} aria-hidden className="pointer-events-none absolute inset-0 block h-full w-full opacity-0 will-change-transform" />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/70 to-transparent opacity-0 group-data-[dark=true]/stage:opacity-100" />
